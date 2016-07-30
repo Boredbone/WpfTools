@@ -1,0 +1,212 @@
+﻿<UserControl x:Class="WpfTools.Controls.ColorSelector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfTools.Controls"
+             xmlns:b="clr-namespace:WpfTools.Behaviors"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+
+        <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+
+        <ControlTemplate x:Key="presetButton" TargetType="{x:Type Button}">
+            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" 
+                    CornerRadius="0" x:Name="Border" Padding="{TemplateBinding Padding}">
+                <ContentPresenter
+                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Border" Property="Background" 
+                            Value="DarkGray" />
+                </Trigger>
+                <Trigger Property="IsPressed"  Value="True">
+                    <Setter TargetName="Border" Property="Background"
+                            Value="Gray" />
+                </Trigger>
+                <Trigger Property="IsEnabled"  Value="False">
+                    <Setter TargetName="Border" Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="LightGray"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+    </UserControl.Resources>
+    <Grid x:Name="rootGrid">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Selected Color -->
+        <Grid Grid.Row="0">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" Margin="4" Width="48" Height="32">
+
+                <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Border.Background>
+                        <DrawingBrush Viewport="0,0,16,16" TileMode="Tile" ViewportUnits="Absolute">
+                            <DrawingBrush.Drawing>
+                                <DrawingGroup>
+                                    <GeometryDrawing Brush="#FFF8F8F8">
+                                        <GeometryDrawing.Geometry>
+                                            <RectangleGeometry Rect="0,0,100,100"  />
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Brush="#FFD8D8D8">
+                                        <GeometryDrawing.Geometry>
+                                            <GeometryGroup RenderOptions.EdgeMode="Aliased">
+                                                <RectangleGeometry Rect="0,0,50,50" />
+                                                <RectangleGeometry Rect="50,50,50,50" />
+                                            </GeometryGroup>
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Border.Background>
+                </Border>
+
+                <Border Background="{Binding SelectedColor.Value,Mode=OneWay,
+                    Converter={StaticResource ColorToBrushConverter}}"
+                        BorderThickness="1"
+                        BorderBrush="Black"/>
+            </Grid>
+
+            <TextBlock Grid.Column="1" Margin="4"
+                       Text="{Binding SelectedColor.Value,Mode=OneWay}"/>
+
+        </Grid>
+
+        <!-- Editor -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.Resources>
+                <Style TargetType="TextBlock" x:Key="textStyle">
+                    <Setter Property="Margin" Value="4"/>
+                </Style>
+                <Style TargetType="Slider" x:Key="slidertStyle">
+                    <Setter Property="Margin" Value="4"/>
+                    <Setter Property="Minimum" Value="0"/>
+                    <Setter Property="Maximum" Value="255"/>
+                    <Setter Property="SmallChange" Value="1"/>
+                    <Setter Property="LargeChange" Value="16"/>
+                    <Setter Property="b:SliderBehavior.IsReceivePreviewMouseWheel"
+                            Value="True"/>
+                </Style>
+                <Style TargetType="TextBox" x:Key="textBoxStyle">
+                    <Setter Property="Margin" Value="4"/>
+                    <Setter Property="Width" Value="70"/>
+                </Style>
+            </Grid.Resources>
+
+            <TextBlock
+                Grid.Row="0" Grid.Column="0" Style="{StaticResource textStyle}"
+                Text="A"/>
+            <Slider
+                Grid.Row="0" Grid.Column="1" Style="{StaticResource slidertStyle}"
+                Value="{Binding A.Value,Mode=TwoWay}"/>
+            <TextBox
+                Grid.Row="0" Grid.Column="2" Style="{StaticResource textBoxStyle}"
+                Text="{Binding A.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock
+                Grid.Row="1" Grid.Column="0" Style="{StaticResource textStyle}"
+                Text="R"/>
+            <Slider
+                Grid.Row="1" Grid.Column="1" Style="{StaticResource slidertStyle}"
+                Value="{Binding R.Value,Mode=TwoWay}"/>
+            <TextBox
+                Grid.Row="1" Grid.Column="2" Style="{StaticResource textBoxStyle}"
+                Text="{Binding R.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock
+                Grid.Row="2" Grid.Column="0" Style="{StaticResource textStyle}"
+                Text="G"/>
+            <Slider
+                Grid.Row="2" Grid.Column="1" Style="{StaticResource slidertStyle}"
+                Value="{Binding G.Value,Mode=TwoWay}"/>
+            <TextBox
+                Grid.Row="2" Grid.Column="2" Style="{StaticResource textBoxStyle}"
+                Text="{Binding G.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock
+                Grid.Row="3" Grid.Column="0" Style="{StaticResource textStyle}"
+                Text="B"/>
+            <Slider
+                Grid.Row="3" Grid.Column="1" Style="{StaticResource slidertStyle}"
+                Value="{Binding B.Value,Mode=TwoWay}"/>
+            <TextBox
+                Grid.Row="3" Grid.Column="2" Style="{StaticResource textBoxStyle}"
+                Text="{Binding B.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+
+
+        </Grid>
+
+        <!-- Preset -->
+
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding Presets,Mode=OneWay}">
+
+
+            <!--
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="{x:Type item}">
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>-->
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Name="border" Padding="2">
+                        <Button Template="{StaticResource presetButton}"
+                                Padding="2" Margin="0"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                Command="{Binding ElementName=rootGrid,Path=DataContext.PresetCommand}"
+                                CommandParameter="{Binding}"
+                                ToolTip="{Binding}">
+                            <Rectangle
+                                Stroke="Black" StrokeThickness="1"
+                                Fill="{Binding Converter={StaticResource ColorToBrushConverter}}" 
+                                Width="16" Height="16"/>
+                        </Button>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>
+

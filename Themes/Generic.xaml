@@ -1,0 +1,404 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:WpfTools.Controls"
+    xmlns:control="clr-namespace:WpfTools.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:tb="clr-namespace:WpfTools.Behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+
+
+
+
+    <Style TargetType="{x:Type control:FastCanvas}">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type control:FastCanvas}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            x:Name="PART_RootBorder"
+                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            Focusable="False">
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type control:SplitView}">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type control:SplitView}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Focusable="False">
+                        <Grid>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border x:Name="PART_panePlace" 
+                                        Grid.Column="0" Background="Transparent"
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+                                <Border x:Name="PART_mainContent"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+                            </Grid>
+
+                            <Border x:Name="PART_middleContent"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border x:Name="PART_pane" 
+                                        Grid.Column="0" Background="Transparent"
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+                                <Border x:Name="PART_cover"
+                                        Grid.Column="1" Background="#00000000"
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type control:VirtualizedGridView}">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type control:VirtualizedGridView}">
+                    <Border Background="Transparent"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            x:Name="PART_virtualizedGridViewRoot"
+                            Focusable="False">
+
+                        <ScrollViewer
+                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Top"
+                            HorizontalScrollBarVisibility="Disabled"
+                            VerticalScrollBarVisibility="Auto"
+                            SnapsToDevicePixels="True"
+                            UseLayoutRounding="True"
+                            PanningMode="VerticalOnly"
+                            IsTabStop="False"
+                            x:Name="PART_scrollViewer">
+
+                            <control:FastCanvas
+                                x:Name="PART_scrollableContent"
+                                Background="{TemplateBinding Background}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top" Margin="0">
+                            </control:FastCanvas>
+
+                        </ScrollViewer>
+
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+    <ControlTemplate x:Key="flatButton" TargetType="{x:Type Button}">
+        <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="0" 
+                CornerRadius="0" x:Name="Border" Padding="0"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Border" Property="Background" Value="#20000000" />
+            </Trigger>
+            <Trigger Property="IsPressed"  Value="True">
+                <Setter TargetName="Border" Property="Background" Value="#40000000" />
+            </Trigger>
+            <Trigger Property="IsEnabled"  Value="False">
+                <Setter TargetName="Border" Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="LightGray"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>-->
+
+    <Style TargetType="{x:Type control:LabeledIcon}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type control:LabeledIcon}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="0"
+                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            x:Name="PART_RootBorder">
+                        <Grid
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="PART_Icon" Grid.Column="0"
+                                           HorizontalAlignment="Center"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Center"
+                                       TextOptions.TextFormattingMode="Ideal"/>
+                            <TextBlock x:Name="PART_Label" Grid.Column="1"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           VerticalAlignment="Center"/>
+                            <!--
+                                <ContentPresenter Grid.Column="1"
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Center"/>-->
+                        </Grid>
+                    </Border>
+                    <!--
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PART_Button" Property="Background" Value="#20000000" />
+                            <Setter TargetName="PART_Button" Property="BorderBrush" Value="Transparent" />
+                        </Trigger>
+                        <Trigger Property="IsPressed"  Value="True">
+                            <Setter TargetName="PART_Button" Property="Background" Value="#40000000" />
+                            <Setter TargetName="PART_Button" Property="BorderBrush" Value="Transparent" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled"  Value="False">
+                            <Setter TargetName="PART_Button" Property="Background" Value="Transparent" />
+                            <Setter TargetName="PART_Button" Property="Foreground" Value="LightGray"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>-->
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type local:Rating}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:Rating}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid Width="Auto"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center">
+
+                            <Slider
+                                x:Name="PART_slider"
+                                Maximum="5.49"
+                                Opacity="0"
+                                TickFrequency="1"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="False"
+                                AutoToolTipPlacement="TopLeft"
+                                AutoToolTipPrecision="0"
+                                tb:SliderBehavior.MoveToPointOnDrag="True"
+                                LargeChange="1"
+                                SmallChange="1"
+                                Margin="0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"/>
+
+                            <Border
+                                x:Name="PART_itemsBorder"
+                                IsHitTestVisible="False">
+                                <ItemsControl
+                                x:Name="PART_items">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Width="32" BorderThickness="1" BorderBrush="Green">
+                                                <Grid Width="32">
+                                                    <Grid.Resources>
+                                                        <Style TargetType="TextBlock" x:Key="ratingTextStyle">
+                                                            <Setter Property="Text" Value="x"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger
+                                                                    Binding="{Binding IsSelected}" Value="True">
+                                                                    <Setter Property="Foreground" Value="Red"/>
+                                                                    <Setter Property="Text" Value="o"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Grid.Resources>
+
+                                                    <TextBlock HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Style="{StaticResource ratingTextStyle}">
+                                                    </TextBlock>
+
+                                                    <TextBlock Text="{Binding Value}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+
+                                </ItemsControl>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type control:FlatButton}">
+        <Setter Property="Foreground" 
+                Value="{Binding RelativeSource={RelativeSource Self}, Path=NormalForeground}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type control:FlatButton}">
+                    <Border Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="0" x:Name="Border" 
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    
+                    <ControlTemplate.Triggers>
+                        <!--
+                            TextBlock.Foreground="{TemplateBinding Foreground}"
+                        <Trigger Property="IsMouseOver" Value="True">
+                            
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="Gray" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{TemplateBinding BorderBrush}" />
+                        </Trigger>-->
+                        <!---->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PointerHoverBackground}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PointerHoverBorderBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed"  Value="True">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedBackground}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedBorderBrush}" />
+                            <Setter TargetName="Border" Property="BorderThickness"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedBorderThickness}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled"  Value="False">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DisabledBackground}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DisabledBorderBrush}" />
+                            
+                            <!--<Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DisabledForeground}"/>-->
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled"  Value="False">
+                <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource Self}, Path=DisabledForeground}"/>
+            </Trigger><!--
+            <Trigger Property="IsEnabled"  Value="True">
+                <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource Self}, Path=NormalForeground}"/>
+            </Trigger>-->
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type control:FlatToggleButton}">
+        <!--<Setter Property="Foreground" Value="Black"/>-->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type control:FlatToggleButton}">
+                    <Border Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="0" x:Name="Border" 
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PointerHoverBackground}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PointerHoverBorderBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed"  Value="True">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedBackground}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedBorderBrush}" />
+                            <Setter TargetName="Border" Property="BorderThickness"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedBorderThickness}"/>
+                        </Trigger>
+                        
+                        <Trigger Property="IsChecked"  Value="True">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CheckedBackground}" />
+                        </Trigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsChecked" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CheckedPointerHoverBackground}" />
+                        </MultiTrigger>
+                        
+                        <Trigger Property="IsEnabled"  Value="False">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DisabledBackground}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DisabledBorderBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled"  Value="True">
+                <Setter Property="Foreground"
+                        Value="{Binding RelativeSource={RelativeSource Self}, Path=NormalForeground}"/>
+            </Trigger>
+            <Trigger Property="IsChecked"  Value="True">
+                <Setter Property="Foreground"
+                        Value="{Binding RelativeSource={RelativeSource Self}, Path=CheckedForeground}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled"  Value="False">
+                <Setter Property="Foreground"
+                        Value="{Binding RelativeSource={RelativeSource Self}, Path=DisabledForeground}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>
