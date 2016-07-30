@@ -130,6 +130,14 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="VisibilityHelper.cs" />
+    <Compile Include="XamlTools\Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="XamlTools\Converters\BoolInvertingConverter.cs" />
+    <Compile Include="XamlTools\Converters\ColorConverter.cs" />
+    <Compile Include="XamlTools\Converters\MultiplyConverter.cs" />
+    <Compile Include="XamlTools\DependencyPropertyWatcher.cs" />
+    <Compile Include="XamlTools\Extensions\DependencyObjectExtensions.cs" />
+    <Compile Include="XamlTools\Extensions\EventAsObservable.cs" />
+    <Compile Include="XamlTools\ObservableCancellationTokenSource.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -142,12 +150,11 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
+    <ProjectReference Include="..\CsCommon\CsCommon.csproj">
       <Project>{84dad39a-811d-4c38-9a03-99daaf96f191}</Project>
       <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\XamlTools\XamlTools.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
