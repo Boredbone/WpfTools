@@ -137,6 +137,7 @@
     <Compile Include="XamlTools\DependencyPropertyWatcher.cs" />
     <Compile Include="XamlTools\Extensions\DependencyObjectExtensions.cs" />
     <Compile Include="XamlTools\Extensions\EventAsObservable.cs" />
+    <Compile Include="XamlTools\Extensions\PointerTapEventArgs.cs" />
     <Compile Include="XamlTools\ObservableCancellationTokenSource.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

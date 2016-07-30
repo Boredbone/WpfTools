@@ -10,6 +10,8 @@ using System.Diagnostics;
 using Windows.UI.Xaml;
 #else
 using System.Windows;
+using System.Windows;
+using System.Windows.Input;
 #endif
 
 namespace Boredbone.XamlTools.Extensions
@@ -55,7 +57,7 @@ namespace Boredbone.XamlTools.Extensions
         //    {
         //        var subscriptions = new CompositeDisposable();
         //        var acceepted = true;
-                
+
         //        var pub = source.Where(x => acceepted);
 
         //        pub.Subscribe(o).AddTo(subscriptions);
@@ -145,7 +147,7 @@ namespace Boredbone.XamlTools.Extensions
         //        trigger.Subscribe(_ => acceptCount = count).AddTo(subscriptions);
 
         //        source.Where(_ => --acceptCount < 0).Subscribe(o).AddTo(subscriptions);
-                
+
         //        return subscriptions;
         //    });
         //}
@@ -194,5 +196,127 @@ namespace Boredbone.XamlTools.Extensions
             => Observable.FromEvent<RoutedEventHandler, RoutedEventArgs>
                 (h => (sender, e) => h(e), h => target.Unloaded += h, h => target.Unloaded -= h);
 
+
+
+
+
+        public static IObservable<PointerTapEventArgs> PreviewPointerDownAsObservable
+            (this UIElement target)
+        {
+            // マウスダウン、マウスアップ、マウスムーブのIObservable
+            return Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
+                h => (s, e) => h(e),
+                h => target.PreviewMouseLeftButtonDown += h,
+                h => target.PreviewMouseLeftButtonDown -= h)
+                .Select(x => new PointerTapEventArgs(x))
+                .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.PreviewTouchDown += h,
+                h => target.PreviewTouchDown -= h)
+                .Where(_ => target.IsManipulationEnabled)
+                .Select(x => new PointerTapEventArgs(x)));
+
+        }
+
+
+        public static IObservable<PointerTapEventArgs> PointerMoveAsObservable
+            (this UIElement target)
+        {
+            return Observable.FromEvent<MouseEventHandler, MouseEventArgs>(
+                h => (s, e) => h(e),
+                h => target.MouseMove += h,
+                h => target.MouseMove -= h)
+                .Select(x => new PointerTapEventArgs(x))
+                .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.TouchMove += h,
+                h => target.TouchMove -= h)
+                .Where(_ => target.IsManipulationEnabled)
+                .Select(x => new PointerTapEventArgs(x)));
+
+        }
+        public static IObservable<PointerTapEventArgs> PreviewPointerUpAsObservable
+            (this UIElement target)
+        {
+            return Observable.FromEvent<MouseButtonEventHandler, MouseButtonEventArgs>(
+                h => (s, e) => h(e),
+                h => target.PreviewMouseLeftButtonUp += h,
+                h => target.PreviewMouseLeftButtonUp -= h)
+                .Select(x => new PointerTapEventArgs(x))
+                .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.PreviewTouchUp += h,
+                h => target.PreviewTouchUp -= h)
+                .Where(_ => target.IsManipulationEnabled)
+                .Select(x => new PointerTapEventArgs(x)));
+        }
+
+
+        public static IObservable<PointerTapEventArgs> ManipulationStartedAsObservable
+            (this UIElement target)
+        {
+            return Observable.FromEvent<EventHandler<ManipulationStartedEventArgs>, ManipulationStartedEventArgs>(
+                h => (s, e) => h(e),
+                h => target.ManipulationStarted += h,
+                h => target.ManipulationStarted -= h)
+                .Where(_ => target.IsManipulationEnabled)
+                .Select(x => new PointerTapEventArgs(_ => x.ManipulationOrigin));
+        }
+        public static IObservable<PointerTapEventArgs> ManipulationDeltaAsObservable
+            (this UIElement target)
+        {
+            return Observable.FromEvent<EventHandler<ManipulationDeltaEventArgs>, ManipulationDeltaEventArgs>(
+                h => (s, e) => h(e),
+                h => target.ManipulationDelta += h,
+                h => target.ManipulationDelta -= h)
+                .Where(_ => target.IsManipulationEnabled)
+                .Select(x => new PointerTapEventArgs(_ => x.ManipulationOrigin));
+        }
+        public static IObservable<PointerTapEventArgs> ManipulationCompletedAsObservable
+            (this UIElement target)
+        {
+            return Observable.FromEvent<EventHandler<ManipulationCompletedEventArgs>, ManipulationCompletedEventArgs>(
+                h => (s, e) => h(e),
+                h => target.ManipulationCompleted += h,
+                h => target.ManipulationCompleted -= h)
+                .Where(_ => target.IsManipulationEnabled)
+                .Select(x => new PointerTapEventArgs(_ => x.ManipulationOrigin));
+        }
+
+        public static IObservable<int> ObserveTouchCountDelta
+            (this UIElement target)
+        {
+            /*
+            return Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.TouchDown += h,
+                h => target.TouchDown -= h)
+                .Select(_ => 1)
+                .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.TouchEnter += h,
+                h => target.TouchEnter -= h)
+                .Select(_ => 1))
+                .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.TouchUp += h,
+                h => target.TouchUp -= h)
+                .Select(_ => -1))
+                .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.TouchLeave += h,
+                h => target.TouchLeave -= h)
+                .Select(_ => -1));*/
+            return Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.TouchEnter += h,
+                h => target.TouchEnter -= h)
+                .Select(_ => 1)
+                .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.TouchLeave += h,
+                h => target.TouchLeave -= h)
+                .Select(_ => -1));
+        }
     }
 }
