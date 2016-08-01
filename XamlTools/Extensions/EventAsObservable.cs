@@ -10,7 +10,6 @@ using System.Diagnostics;
 using Windows.UI.Xaml;
 #else
 using System.Windows;
-using System.Windows;
 using System.Windows.Input;
 #endif
 

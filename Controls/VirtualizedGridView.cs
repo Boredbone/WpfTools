@@ -47,6 +47,24 @@ namespace WpfTools.Controls
 
         #endregion
 
+        #region IsRefreshEnabled
+
+        public bool IsRefreshEnabled
+        {
+            get { return (bool)GetValue(IsRefreshEnabledProperty); }
+            set { SetValue(IsRefreshEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsRefreshEnabledProperty =
+            DependencyProperty.Register(nameof(IsRefreshEnabled), typeof(bool),
+                typeof(VirtualizedGridView), new PropertyMetadata(true));
+
+        #endregion
+
+
+
+
+
         #region ItemTemplate
 
         public DataTemplate ItemTemplate
@@ -294,6 +312,7 @@ namespace WpfTools.Controls
 
                 list.CollectionChangedAsObservable()
                     .ObserveOnUIDispatcher()
+                    .Where(_ => this.IsRefreshEnabled)
                     .Subscribe(this.OnCollectionChanged)
                     .AddTo(this.disposables);
             }
