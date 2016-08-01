@@ -130,6 +130,20 @@ namespace WpfTools.Controls
         #endregion
 
 
+        #region ItemsMargin
+
+        public Thickness ItemsMargin
+        {
+            get { return (Thickness)GetValue(ItemsMarginProperty); }
+            set { SetValue(ItemsMarginProperty, value); }
+        }
+
+        public static readonly DependencyProperty ItemsMarginProperty =
+            DependencyProperty.Register(nameof(ItemsMargin), typeof(Thickness),
+                typeof(Rating), new PropertyMetadata(new Thickness(0)));
+
+        #endregion
+
 
 
 
@@ -179,6 +193,7 @@ namespace WpfTools.Controls
 
                 var itemWidth = e.NewSize.Width / this.Maximum;
                 this.ItemsBorder.Margin = new Thickness(itemWidth / 2.0 + thumbWidth, 0, thumbWidth, 0);
+                this.ItemsMargin = this.ItemsBorder.Margin;
             };
             this.Items.ItemTemplate = this.ItemTemplate;
             this.Items.ItemsSource = this.RatingCollection;
