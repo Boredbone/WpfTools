@@ -135,7 +135,10 @@ namespace WpfTools.Controls
             if (thisInstance != null && thisInstance.Icon != null)
             {
                 thisInstance.Label.Text = value;
-                thisInstance.ToolTip = value;
+                if (thisInstance.ToolTip == null || thisInstance.ToolTip.ToString().Length <= 0)
+                {
+                    thisInstance.ToolTip = value;
+                }
             }
         }
 
@@ -173,7 +176,11 @@ namespace WpfTools.Controls
             }
             this.Icon.FontSize = this.IconFontSize;
             
-            this.ToolTip = this.Text;
+            //this.ToolTip = this.Text;
+            if (this.ToolTip == null || this.ToolTip.ToString().Length <= 0)
+            {
+                this.ToolTip = this.Text;
+            }
 
             this.Label.Text = this.Text;
         }
