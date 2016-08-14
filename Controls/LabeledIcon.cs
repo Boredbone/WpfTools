@@ -31,7 +31,7 @@ namespace WpfTools.Controls
             var thisInstance = d as LabeledIcon;
             var value = e.NewValue as string;
 
-            if (thisInstance != null && thisInstance.Icon!=null)
+            if (thisInstance != null && thisInstance.Icon != null)
             {
                 thisInstance.Icon.Text = value;
             }
@@ -137,13 +137,64 @@ namespace WpfTools.Controls
                 thisInstance.Label.Text = value;
                 if (thisInstance.ToolTip == null || thisInstance.ToolTip.ToString().Length <= 0)
                 {
-                    thisInstance.ToolTip = value;
+                    thisInstance.SetTooltip();
                 }
             }
         }
 
         #endregion
-        
+
+        #region Shortcut
+
+        public string Shortcut
+        {
+            get { return (string)GetValue(ShortcutProperty); }
+            set { SetValue(ShortcutProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShortcutProperty =
+            DependencyProperty.Register(nameof(Shortcut), typeof(string), typeof(LabeledIcon),
+            new PropertyMetadata(null, new PropertyChangedCallback(OnShortcutChanged)));
+
+        private static void OnShortcutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as LabeledIcon;
+            var value = e.NewValue as string;
+
+            if (thisInstance != null && value != null)
+            {
+                thisInstance.SetTooltip();
+            }
+        }
+
+        #endregion
+
+        #region IsAutoTooltip
+
+        public bool IsAutoTooltip
+        {
+            get { return (bool)GetValue(IsAutoTooltipProperty); }
+            set { SetValue(IsAutoTooltipProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsAutoTooltipProperty =
+            DependencyProperty.Register(nameof(IsAutoTooltip), typeof(bool), typeof(LabeledIcon),
+            new PropertyMetadata(true, new PropertyChangedCallback(OnIsAutoTooltipChanged)));
+
+        private static void OnIsAutoTooltipChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as LabeledIcon;
+            var value = e.NewValue as bool?;
+
+            if (thisInstance != null && value.HasValue && value.Value)
+            {
+                thisInstance.SetTooltip();
+            }
+        }
+
+        #endregion
+
+
 
         public TextBlock Icon { get; private set; }
         public TextBlock Label { get; private set; }
@@ -164,7 +215,7 @@ namespace WpfTools.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            
+
             this.Icon = this.GetTemplateChild("PART_Icon") as TextBlock;
             this.Label = this.GetTemplateChild("PART_Label") as TextBlock;
 
@@ -175,14 +226,38 @@ namespace WpfTools.Controls
                 this.Icon.FontFamily = this.IconFontFamily;
             }
             this.Icon.FontSize = this.IconFontSize;
-            
+
             //this.ToolTip = this.Text;
             if (this.ToolTip == null || this.ToolTip.ToString().Length <= 0)
             {
-                this.ToolTip = this.Text;
+                this.SetTooltip();
+                //this.ToolTip = this.Text;
+            }
+            else
+            {
+                this.IsAutoTooltip = false;
             }
 
             this.Label.Text = this.Text;
         }
+
+
+        private void SetTooltip()
+        {
+            if (!this.IsAutoTooltip)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(this.Shortcut))
+            {
+                this.ToolTip = this.Text;
+            }
+            else
+            {
+                this.ToolTip = $"{this.Text} ({this.Shortcut})";
+            }
+        }
+
     }
 }
