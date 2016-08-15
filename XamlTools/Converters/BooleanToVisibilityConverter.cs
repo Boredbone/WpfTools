@@ -97,4 +97,43 @@ namespace Boredbone.XamlTools.Converters
         }
 
     }
+
+    public class NullToVisibilityConverter : IValueConverter
+    {
+        public bool IsReversed { get; set; }
+
+        public object Convert(object value, Type targetType, object parameter,
+#if WINDOWS_APP || WINDOWS_UWP
+            string language
+#else
+            System.Globalization.CultureInfo culture
+#endif
+            )
+        {
+            var val = value != null; 
+            if (this.IsReversed)
+            {
+                val = !val;
+            }
+
+            if (val)
+            {
+                return Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter,
+#if WINDOWS_APP || WINDOWS_UWP
+            string language
+#else
+            System.Globalization.CultureInfo culture
+#endif
+            )
+        {
+            throw new NotImplementedException();
+        }
+
+    }
 }

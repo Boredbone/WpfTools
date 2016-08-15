@@ -53,6 +53,33 @@ namespace WpfTools.Controls
 
         #endregion
 
+        #region Alpha
+
+        public bool Alpha
+        {
+            get { return (bool)GetValue(AlphaProperty); }
+            set { SetValue(AlphaProperty, value); }
+        }
+
+        public static readonly DependencyProperty AlphaProperty =
+            DependencyProperty.Register(nameof(Alpha), typeof(bool), typeof(ColorSelector),
+            new PropertyMetadata(true, new PropertyChangedCallback(OnAlphaChanged)));
+
+        private static void OnAlphaChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as ColorSelector;
+            var value = e.NewValue as bool?;
+
+            if (thisInstance != null && value.HasValue)
+            {
+                thisInstance.viewModel.Alpha = value.Value;
+            }
+        }
+
+        #endregion
+
+
+
         private readonly ColorSelectorViewModel viewModel;
         private readonly CompositeDisposable disposables;
 
@@ -63,6 +90,8 @@ namespace WpfTools.Controls
             this.disposables = new CompositeDisposable();
 
             this.viewModel = new ColorSelectorViewModel().AddTo(this.disposables);
+            this.viewModel.Alpha = this.Alpha;
+
             this.rootGrid.DataContext = this.viewModel;
 
             this.viewModel.SelectedColor.Subscribe(x => this.SelectedColor = x).AddTo(this.disposables);
@@ -94,6 +123,21 @@ namespace WpfTools.Controls
 
         private ReactiveProperty<bool> Updating { get; }
 
+        public bool Alpha
+        {
+            get { return _fieldAlpha; }
+            set
+            {
+                if (_fieldAlpha != value)
+                {
+                    _fieldAlpha = value;
+                    RaisePropertyChanged(nameof(Alpha));
+                }
+            }
+        }
+        private bool _fieldAlpha;
+        
+
         public ColorSelectorViewModel()
         {
             this.disposables = new CompositeDisposable();
@@ -109,7 +153,7 @@ namespace WpfTools.Controls
                 .CombineLatest(this.A, this.R, this.G, this.B)
                 .CombineLatest(this.Updating, (x, _) => x)
                 .Where(_ => !this.Updating.Value)
-                .Select(x => Color.FromArgb(x[0], x[1], x[2], x[3]))
+                .Select(x => Color.FromArgb(this.Alpha ? x[0] : (byte)0xFF, x[1], x[2], x[3]))
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.disposables);
 
@@ -187,22 +231,6 @@ namespace WpfTools.Controls
 
         protected void RaisePropertyChanged(string propertyName)
             => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-
-    public class ColorToBrushConverter : IValueConverter
-    {
-
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return new SolidColorBrush((Color)value);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }
 

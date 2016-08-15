@@ -4,12 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfTools.Controls"
+             xmlns:converters="clr-namespace:Boredbone.XamlTools.Converters"
              xmlns:b="clr-namespace:WpfTools.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
 
-        <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
 
         <ControlTemplate x:Key="presetButton" TargetType="{x:Type Button}">
             <Border Background="{TemplateBinding Background}"
@@ -125,13 +127,16 @@
 
             <TextBlock
                 Grid.Row="0" Grid.Column="0" Style="{StaticResource textStyle}"
-                Text="A"/>
+                Text="A"
+                Visibility="{Binding Alpha,Mode=OneWay,Converter={StaticResource TrueToVisibleConverter}}"/>
             <Slider
                 Grid.Row="0" Grid.Column="1" Style="{StaticResource slidertStyle}"
-                Value="{Binding A.Value,Mode=TwoWay}"/>
+                Value="{Binding A.Value,Mode=TwoWay}"
+                Visibility="{Binding Alpha,Mode=OneWay,Converter={StaticResource TrueToVisibleConverter}}"/>
             <TextBox
                 Grid.Row="0" Grid.Column="2" Style="{StaticResource textBoxStyle}"
-                Text="{Binding A.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                Text="{Binding A.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                Visibility="{Binding Alpha,Mode=OneWay,Converter={StaticResource TrueToVisibleConverter}}"/>
 
             <TextBlock
                 Grid.Row="1" Grid.Column="0" Style="{StaticResource textStyle}"

@@ -115,6 +115,7 @@
     <Compile Include="Controls\Rating.cs" />
     <Compile Include="Controls\SplitView.cs" />
     <Compile Include="Controls\VirtualizedGridView.cs" />
+    <Compile Include="XamlTools\Converters\ColorToBrushConverter.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="FolderSelectDialog.cs" />
     <Compile Include="NoOperationCommand.cs" />
