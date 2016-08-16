@@ -21,6 +21,7 @@ using Boredbone.XamlTools;
 using Boredbone.XamlTools.Extensions;
 using Reactive.Bindings.Extensions;
 using System.Windows.Threading;
+using Boredbone.Utility.Tools;
 
 namespace WpfTools.Controls
 {
@@ -114,7 +115,7 @@ namespace WpfTools.Controls
 
         #endregion
 
-        
+
 
 
 
@@ -497,25 +498,6 @@ namespace WpfTools.Controls
                 this.EnableItem(i, this.ItemsSource[i]);
             }
 
-            /*
-            var rect = new Rect(
-                this.scrollViewer.HorizontalOffset,
-                this.scrollViewer.VerticalOffset,
-                this.scrollViewer.ViewportWidth,
-                this.scrollViewer.ViewportHeight);
-
-            this.scrollableContent.SetViewport(rect);*/
-
-            //foreach (var item in this.ItemsSource)
-            //{
-            //    var elm = this.ItemTemplate.LoadContent() as FrameworkElement;
-            //
-            //    if (elm != null)
-            //    {
-            //        elm.DataContext = item;
-            //        this.scrollableContent.Children.Add(elm);
-            //    }
-            //}
         }
 
         /// <summary>
@@ -707,8 +689,8 @@ namespace WpfTools.Controls
             //item.Top = top;
             //item.Left = left;
 
-            item.Enable(dataContext, left, top);
-            
+            item.Enable(index, dataContext, left, top);
+
         }
 
         public void Dispose()
@@ -727,6 +709,9 @@ namespace WpfTools.Controls
             private double Left { get; set; }
             public ContentControl Item { get; }
 
+            private Indexed<object> Data { get; }
+        
+
             public bool IsEnabled
                 => (this.Item == null) ? false : (this.Item.Visibility == Visibility.Visible);
 
@@ -735,6 +720,7 @@ namespace WpfTools.Controls
             public ItemCacheContainer(ContentControl item)
             {
                 this.Item = item;
+                this.Data = new Indexed<object>();
             }
 
             public void Disable()
@@ -745,21 +731,8 @@ namespace WpfTools.Controls
                 //this.isActive = false;
             }
 
-            public void Enable(object dataContext, double left, double top)
+            public void Enable(int index, object dataContext, double left, double top)
             {
-                //this.isActive = true;
-
-                /*
-                if (this.Left != left)
-                {
-                    this.Left = left;
-                    Canvas.SetLeft(this.Item, this.Left);
-                }
-                if (this.Top != top)
-                {
-                    this.Top = top;
-                    Canvas.SetTop(this.Item, this.Top);
-                }*/
 
                 if (this.Left != left || this.Top != top)
                 {
@@ -768,8 +741,11 @@ namespace WpfTools.Controls
                     FastCanvas.SetLocation(this.Item, new Point(this.Left, this.Top));
                 }
 
-                this.Item.DataContext = dataContext;
-                this.Item.Content = dataContext;
+                this.Data.Index = index;
+                this.Data.Value = dataContext;
+
+                //this.Item.DataContext = this.Data;
+                this.Item.Content = this.Data;
                 this.Item.Visibility = Visibility.Visible;
             }
         }
