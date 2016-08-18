@@ -524,20 +524,25 @@ namespace WpfTools.Controls
             {
                 var row = this.requestedScrollIndex / this.ColumnLengthInner.Value;
 
-                var offset = row * this.itemHeight.Value;
+                var currentRow = (int)(top / this.itemHeight.Value);
 
-                this.scrollViewer.ScrollToVerticalOffset(offset);
+                if (row != currentRow)
+                {
 
-                if (offset < 0)
-                {
-                    offset = 0;
+                    var offset = row * this.itemHeight.Value;
+
+                    this.scrollViewer.ScrollToVerticalOffset(offset);
+
+                    if (offset < 0)
+                    {
+                        offset = 0;
+                    }
+                    if (offset > this.scrollViewer.ScrollableHeight)
+                    {
+                        offset = this.scrollViewer.ScrollableHeight;
+                    }
+                    top = offset;
                 }
-                if (offset > this.scrollViewer.ScrollableHeight)
-                {
-                    offset = this.scrollViewer.ScrollableHeight;
-                }
-                top = offset;
-                
 
                 this.scrollRequested = false;
             }
