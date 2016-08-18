@@ -445,8 +445,19 @@ namespace WpfTools.Controls
                 || this.ItemsSource.Count <= 0
                 || this.ItemTemplate == null)
             {
-                this.activeItems.ToArray().ForEach(x => this.DisableItem(x.Key));
-                //this.scrollableContent.Children.Clear();
+                var array = this.activeItems.ToArray();
+                array.ForEach(x => this.DisableItem(x.Key));
+
+                if (!this.IsPropertiesInitialised)
+                {
+                    this.scrollableContent.Height = 0;
+                    //this.CheckProperties();
+                }
+
+                if (this.scrollRequested)
+                {
+                    this.scrollRequested = false;
+                }
                 return;
             }
 

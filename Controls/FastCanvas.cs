@@ -117,6 +117,10 @@ namespace WpfTools.Controls
         {
             foreach (var child in Children)
             {
+                if (child.Visibility == Visibility.Collapsed)
+                {
+                    continue;
+                }
                 var location = GetLocation(child);
 
                 child.Arrange(new Rect(location, child.DesiredSize));
@@ -130,6 +134,10 @@ namespace WpfTools.Controls
 
             foreach (var child in Children)
             {
+                if (child.Visibility == Visibility.Collapsed)
+                {
+                    continue;
+                }
                 var fe = child as FrameworkElement;
 
                 if (fe != null)
