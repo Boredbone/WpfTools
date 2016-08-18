@@ -22,6 +22,7 @@ using Boredbone.XamlTools.Extensions;
 using Reactive.Bindings.Extensions;
 using System.Windows.Threading;
 using Boredbone.Utility.Tools;
+using System.Diagnostics;
 
 namespace WpfTools.Controls
 {
@@ -203,6 +204,52 @@ namespace WpfTools.Controls
 
         #endregion
 
+
+        #region IsRenderingEnabled
+
+        public bool IsRenderingEnabled
+        {
+            get { return (bool)GetValue(IsRenderingEnabledProperty); }
+            set { SetValue(IsRenderingEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsRenderingEnabledProperty =
+            DependencyProperty.Register(nameof(IsRenderingEnabled), typeof(bool), typeof(VirtualizedGridView),
+            new PropertyMetadata(true, new PropertyChangedCallback(OnIsRenderingEnabledChanged)));
+
+        private static void OnIsRenderingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as VirtualizedGridView;
+            var value = e.NewValue as bool?;
+
+            if (thisInstance != null && value.HasValue && value.Value)
+            {
+                //Debug.WriteLine($"sc{thisInstance.requestedScrollIndex}");
+                thisInstance.scrollRequested = true;
+                thisInstance.RenderItems(true);
+            }
+        }
+
+        #endregion
+
+
+        #region ScrollToIndexAction
+
+        public Action<int> ScrollToIndexAction
+        {
+            get { return (Action<int>)GetValue(ScrollToIndexActionProperty); }
+            set { SetValue(ScrollToIndexActionProperty, value); }
+        }
+
+        public static readonly DependencyProperty ScrollToIndexActionProperty =
+            DependencyProperty.Register(nameof(ScrollToIndexAction), typeof(Action<int>),
+                typeof(VirtualizedGridView), new PropertyMetadata(null));
+
+        #endregion
+
+
+
+
         public int? ColumnLengthInner
         {
             get { return _fieldColumnLengthInner; }
@@ -283,6 +330,8 @@ namespace WpfTools.Controls
                 this.scrollViewer.SizeChanged += this.scrollViewer_SizeChanged;
                 this.scrollViewer.ScrollChanged += this.scrollViewer_ScrollChanged;
             }
+
+            this.ScrollToIndexAction = this.ScrollToIndex;
 
             this.RenderItems();
         }
@@ -434,9 +483,9 @@ namespace WpfTools.Controls
         /// <summary>
         /// 画面内に配置されるアイテムを描画
         /// </summary>
-        private void RenderItems()
+        private void RenderItems(bool force = false)
         {
-            if (this.scrollableContent == null)
+            if (this.scrollableContent == null || (!force && !this.IsRenderingEnabled))
             {
                 return;
             }
@@ -454,7 +503,7 @@ namespace WpfTools.Controls
                     //this.CheckProperties();
                 }
 
-                if (this.scrollRequested)
+                if (!force&& this.scrollRequested)
                 {
                     this.scrollRequested = false;
                 }
@@ -468,17 +517,31 @@ namespace WpfTools.Controls
                     return;
                 }
             }
+            
+            var top = this.scrollViewer.VerticalOffset;
 
             if (this.scrollRequested)
             {
                 var row = this.requestedScrollIndex / this.ColumnLengthInner.Value;
 
-                this.scrollViewer.ScrollToVerticalOffset(row * this.itemHeight.Value);
+                var offset = row * this.itemHeight.Value;
+
+                this.scrollViewer.ScrollToVerticalOffset(offset);
+
+                if (offset < 0)
+                {
+                    offset = 0;
+                }
+                if (offset > this.scrollViewer.ScrollableHeight)
+                {
+                    offset = this.scrollViewer.ScrollableHeight;
+                }
+                top = offset;
+                
 
                 this.scrollRequested = false;
             }
 
-            var top = this.scrollViewer.VerticalOffset;
             var bottom = top + this.scrollViewer.ActualHeight;
 
             var topRow = (int)(top / this.itemHeight.Value);
@@ -571,7 +634,29 @@ namespace WpfTools.Controls
         /// <param name="e"></param>
         private void scrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            this.RenderItems();
+            if (!this.scrollRequested)
+            {
+                this.RenderItems();
+            }
+        }
+
+        /// <summary>
+        /// 指定インデックスの位置までスクロール
+        /// </summary>
+        /// <param name="index"></param>
+        public void ScrollToIndex(int index)
+        {
+            if (this.CurrentIndex != index && this.CurrentIndexInner != index)
+            {
+                this.CurrentIndex = index;
+                return;
+            }
+
+            this.CurrentIndex = index;
+
+            this.requestedScrollIndex = index;
+            this.scrollRequested = true;
+            this.RenderItems(true);
         }
 
         /// <summary>
@@ -721,7 +806,7 @@ namespace WpfTools.Controls
             public ContentControl Item { get; }
 
             private Indexed<object> Data { get; }
-        
+
 
             public bool IsEnabled
                 => (this.Item == null) ? false : (this.Item.Visibility == Visibility.Visible);
