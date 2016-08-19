@@ -362,7 +362,7 @@ namespace WpfTools.Controls
 
                 list.CollectionChangedAsObservable()
                     .ObserveOnUIDispatcher()
-                    .Where(_ => this.IsRefreshEnabled)
+                    //.Where(_ => this.IsRefreshEnabled)
                     .Subscribe(this.OnCollectionChanged)
                     .AddTo(this.disposables);
             }
@@ -503,7 +503,7 @@ namespace WpfTools.Controls
                     //this.CheckProperties();
                 }
 
-                if (!force&& this.scrollRequested)
+                if (!force && this.scrollRequested)
                 {
                     this.scrollRequested = false;
                 }
@@ -517,7 +517,7 @@ namespace WpfTools.Controls
                     return;
                 }
             }
-            
+
             var top = this.scrollViewer.VerticalOffset;
 
             if (this.scrollRequested)
@@ -618,8 +618,8 @@ namespace WpfTools.Controls
 
             this.RenderItems();
 
-            if (this.itemHeight.HasValue
-                && this.scrollableContent.ActualHeight < e.NewSize.Height + this.itemHeight.Value)
+            if (this.itemHeight.HasValue)
+            //&& this.scrollableContent.ActualHeight < e.NewSize.Height + this.itemHeight.Value)
             {
                 this.scrollableContent.InvalidateArrange();
                 //this.Padding = (this.Padding.Bottom == 0) ? new Thickness(1) : new Thickness(0);
@@ -660,7 +660,7 @@ namespace WpfTools.Controls
             this.CurrentIndex = index;
 
             this.requestedScrollIndex = index;
-            this.scrollRequested = true;
+            this.scrollRequested = true;// 2;
             this.RenderItems(true);
         }
 
