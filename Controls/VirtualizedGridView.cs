@@ -304,6 +304,7 @@ namespace WpfTools.Controls
 
         private ScrollViewer scrollViewer = null;
         private FastCanvas scrollableContent = null;
+        
 
         static VirtualizedGridView()
         {
@@ -389,6 +390,7 @@ namespace WpfTools.Controls
                 this.activeItems.ForEach(x => x.Value.Item.DataContext = null);
                 this.pool.ForEach(x => x.Item.DataContext = null);
                 //await Task.Delay(2000);
+                
             }
             //if (e.Action != NotifyCollectionChangedAction.Replace)
             //{
@@ -526,9 +528,8 @@ namespace WpfTools.Controls
 
                 var currentRow = (int)(top / this.itemHeight.Value);
 
-                if (row != currentRow)
+                if (row != currentRow || row == 0)
                 {
-
                     var offset = row * this.itemHeight.Value;
 
                     this.scrollViewer.ScrollToVerticalOffset(offset);
