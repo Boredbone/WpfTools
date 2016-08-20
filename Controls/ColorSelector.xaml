@@ -7,6 +7,7 @@
              xmlns:converters="clr-namespace:Boredbone.XamlTools.Converters"
              xmlns:b="clr-namespace:WpfTools.Behaviors"
              mc:Ignorable="d" 
+             x:Name="controlRoot"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
 
@@ -48,7 +49,9 @@
         </Grid.RowDefinitions>
 
         <!-- Selected Color -->
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0"
+              Visibility="{Binding ElementName=controlRoot,Path=IsSelectedColorVisible,
+            Converter={StaticResource TrueToVisibleConverter}}">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

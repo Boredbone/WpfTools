@@ -78,6 +78,21 @@ namespace WpfTools.Controls
 
         #endregion
 
+        #region IsSelectedColorVisible
+
+        public bool IsSelectedColorVisible
+        {
+            get { return (bool)GetValue(IsSelectedColorVisibleProperty); }
+            set { SetValue(IsSelectedColorVisibleProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsSelectedColorVisibleProperty =
+            DependencyProperty.Register(nameof(IsSelectedColorVisible), typeof(bool),
+                typeof(ColorSelector), new PropertyMetadata(true));
+
+        #endregion
+
+
 
 
         private readonly ColorSelectorViewModel viewModel;
