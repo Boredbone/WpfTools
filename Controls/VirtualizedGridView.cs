@@ -172,7 +172,7 @@ namespace WpfTools.Controls
             }
 
             thisInstance.requestedScrollIndex = value.Value;
-            thisInstance.scrollRequested = true;
+            thisInstance.scrollRequested = 1;
             thisInstance.RenderItems();
         }
 
@@ -225,7 +225,7 @@ namespace WpfTools.Controls
             if (thisInstance != null && value.HasValue && value.Value)
             {
                 //Debug.WriteLine($"sc{thisInstance.requestedScrollIndex}");
-                thisInstance.scrollRequested = true;
+                thisInstance.scrollRequested = 2;
                 thisInstance.RenderItems(true);
             }
         }
@@ -291,7 +291,7 @@ namespace WpfTools.Controls
         private double? itemWidth = null;
         private double? itemHeight = null;
 
-        private bool scrollRequested = false;
+        private int scrollRequested = 0;
         private int requestedScrollIndex = 0;
 
         private Dictionary<int, ItemCacheContainer> activeItems = new Dictionary<int, ItemCacheContainer>();
@@ -304,7 +304,7 @@ namespace WpfTools.Controls
 
         private ScrollViewer scrollViewer = null;
         private FastCanvas scrollableContent = null;
-        
+
 
         static VirtualizedGridView()
         {
@@ -390,7 +390,7 @@ namespace WpfTools.Controls
                 this.activeItems.ForEach(x => x.Value.Item.DataContext = null);
                 this.pool.ForEach(x => x.Item.DataContext = null);
                 //await Task.Delay(2000);
-                
+
             }
             //if (e.Action != NotifyCollectionChangedAction.Replace)
             //{
@@ -505,9 +505,9 @@ namespace WpfTools.Controls
                     //this.CheckProperties();
                 }
 
-                if (!force && this.scrollRequested)
+                if (!force && this.scrollRequested > 0)
                 {
-                    this.scrollRequested = false;
+                    this.scrollRequested--;
                 }
                 return;
             }
@@ -522,7 +522,9 @@ namespace WpfTools.Controls
 
             var top = this.scrollViewer.VerticalOffset;
 
-            if (this.scrollRequested)
+            //Debug.WriteLine(top);
+
+            if (this.scrollRequested > 0)
             {
                 var row = this.requestedScrollIndex / this.ColumnLengthInner.Value;
 
@@ -545,7 +547,7 @@ namespace WpfTools.Controls
                     top = offset;
                 }
 
-                this.scrollRequested = false;
+                this.scrollRequested--;
             }
 
             var bottom = top + this.scrollViewer.ActualHeight;
@@ -640,7 +642,7 @@ namespace WpfTools.Controls
         /// <param name="e"></param>
         private void scrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (!this.scrollRequested)
+            if (this.scrollRequested == 0)
             {
                 this.RenderItems();
             }
@@ -652,6 +654,8 @@ namespace WpfTools.Controls
         /// <param name="index"></param>
         public void ScrollToIndex(int index)
         {
+            //Debug.WriteLine($"scrol to {index}");
+
             if (this.CurrentIndex != index && this.CurrentIndexInner != index)
             {
                 this.CurrentIndex = index;
@@ -661,7 +665,7 @@ namespace WpfTools.Controls
             this.CurrentIndex = index;
 
             this.requestedScrollIndex = index;
-            this.scrollRequested = true;// 2;
+            this.scrollRequested = 2;
             this.RenderItems(true);
         }
 
