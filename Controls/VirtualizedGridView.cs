@@ -642,7 +642,7 @@ namespace WpfTools.Controls
         /// <param name="e"></param>
         private void scrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (this.scrollRequested == 0)
+            if (this.scrollRequested <= 1)
             {
                 this.RenderItems();
             }
