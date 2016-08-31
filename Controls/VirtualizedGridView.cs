@@ -507,7 +507,7 @@ namespace WpfTools.Controls
 
                 if (!force && this.scrollRequested > 0)
                 {
-                    this.scrollRequested--;
+                    //this.scrollRequested--;
                 }
                 return;
             }
