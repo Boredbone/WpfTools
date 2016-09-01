@@ -172,7 +172,7 @@ namespace WpfTools.Controls
             }
 
             thisInstance.requestedScrollIndex = value.Value;
-            thisInstance.scrollRequested = 1;
+            thisInstance.ScrollRequested = 1;
             thisInstance.RenderItems();
         }
 
@@ -225,7 +225,7 @@ namespace WpfTools.Controls
             if (thisInstance != null && value.HasValue && value.Value)
             {
                 //Debug.WriteLine($"sc{thisInstance.requestedScrollIndex}");
-                thisInstance.scrollRequested = 2;
+                thisInstance.ScrollRequested = 1;
                 thisInstance.RenderItems(true);
             }
         }
@@ -291,7 +291,22 @@ namespace WpfTools.Controls
         private double? itemWidth = null;
         private double? itemHeight = null;
 
-        private int scrollRequested = 0;
+        //private int ScrollRequested { get; set; } = 0;
+        public int ScrollRequested
+        {
+            get { return _fieldScrollRequested; }
+            set
+            {
+                if (_fieldScrollRequested != value)
+                {
+                    _fieldScrollRequested = value;
+                    //Debug.WriteLine($"{nameof(this.ScrollRequested)}:{value} to {this.requestedScrollIndex}");
+                }
+            }
+        }
+        private int _fieldScrollRequested = 0;
+
+
         private int requestedScrollIndex = 0;
 
         private Dictionary<int, ItemCacheContainer> activeItems = new Dictionary<int, ItemCacheContainer>();
@@ -505,10 +520,10 @@ namespace WpfTools.Controls
                     //this.CheckProperties();
                 }
 
-                if (!force && this.scrollRequested > 0)
-                {
-                    //this.scrollRequested--;
-                }
+                //if (!force && this.ScrollRequested > 0)
+                //{
+                //    //this.scrollRequested--;
+                //}
                 return;
             }
 
@@ -524,7 +539,7 @@ namespace WpfTools.Controls
 
             //Debug.WriteLine(top);
 
-            if (this.scrollRequested > 0)
+            if (this.ScrollRequested > 0)
             {
                 var row = this.requestedScrollIndex / this.ColumnLengthInner.Value;
 
@@ -547,7 +562,7 @@ namespace WpfTools.Controls
                     top = offset;
                 }
 
-                this.scrollRequested--;
+                this.ScrollRequested--;
             }
 
             var bottom = top + this.scrollViewer.ActualHeight;
@@ -642,7 +657,7 @@ namespace WpfTools.Controls
         /// <param name="e"></param>
         private void scrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (this.scrollRequested <= 1)
+            if (this.ScrollRequested <= 1)
             {
                 this.RenderItems();
             }
@@ -665,7 +680,7 @@ namespace WpfTools.Controls
             this.CurrentIndex = index;
 
             this.requestedScrollIndex = index;
-            this.scrollRequested = 2;
+            this.ScrollRequested = 1;
             this.RenderItems(true);
         }
 
