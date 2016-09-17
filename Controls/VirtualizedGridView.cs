@@ -320,6 +320,7 @@ namespace WpfTools.Controls
         private ScrollViewer scrollViewer = null;
         private FastCanvas scrollableContent = null;
 
+        private double desiredVerticalOffset = 0.0;
 
         static VirtualizedGridView()
         {
@@ -535,7 +536,7 @@ namespace WpfTools.Controls
                 }
             }
 
-            var top = this.scrollViewer.VerticalOffset;
+            var top = this.desiredVerticalOffset;// this.scrollViewer.VerticalOffset;
 
             //Debug.WriteLine(top);
 
@@ -549,7 +550,7 @@ namespace WpfTools.Controls
                 {
                     var offset = row * this.itemHeight.Value;
 
-                    this.scrollViewer.ScrollToVerticalOffset(offset);
+                    this.ScrollToVerticalOffset(offset);
 
                     if (offset < 0)
                     {
@@ -606,7 +607,7 @@ namespace WpfTools.Controls
         {
             if (this.IsPropertiesInitialised)
             {
-                var oldOffset = this.scrollViewer.VerticalOffset;
+                var oldOffset = this.desiredVerticalOffset;// this.scrollViewer.VerticalOffset;
                 var oldIndex = this.CurrentIndexInner + this.ColumnLengthInner.Value;
                 // (int)(oldOffset / this.itemHeight.Value) * this.ColumnLengthInner.Value;
                 var oldItemOffset = oldOffset % this.itemHeight.Value;
@@ -625,7 +626,7 @@ namespace WpfTools.Controls
                 var row = oldIndex / column.Value - 1;
                 var offset = row * this.itemHeight.Value + oldItemOffset;
 
-                this.scrollViewer.ScrollToVerticalOffset(offset);
+                this.ScrollToVerticalOffset(offset);
 
             }
             else
@@ -657,10 +658,17 @@ namespace WpfTools.Controls
         /// <param name="e"></param>
         private void scrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
+            this.desiredVerticalOffset = this.scrollViewer.VerticalOffset;
             if (this.ScrollRequested <= 1)
             {
                 this.RenderItems();
             }
+        }
+
+        private void ScrollToVerticalOffset(double value)
+        {
+            this.desiredVerticalOffset = value;
+            this.scrollViewer.ScrollToVerticalOffset(value);
         }
 
         /// <summary>
