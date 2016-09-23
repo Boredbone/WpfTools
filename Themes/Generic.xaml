@@ -118,26 +118,6 @@
         </Setter>
     </Style>
 
-    <!--
-    <ControlTemplate x:Key="flatButton" TargetType="{x:Type Button}">
-        <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="0" 
-                CornerRadius="0" x:Name="Border" Padding="0"
-                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </Border>
-        <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="Border" Property="Background" Value="#20000000" />
-            </Trigger>
-            <Trigger Property="IsPressed"  Value="True">
-                <Setter TargetName="Border" Property="Background" Value="#40000000" />
-            </Trigger>
-            <Trigger Property="IsEnabled"  Value="False">
-                <Setter TargetName="Border" Property="Background" Value="Transparent" />
-                <Setter Property="Foreground" Value="LightGray"/>
-            </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>-->
 
     <Style TargetType="{x:Type control:LabeledIcon}">
         <Setter Property="Template">
@@ -150,42 +130,25 @@
                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                             x:Name="PART_RootBorder">
                         <Grid
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center">
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="PART_Icon" Grid.Column="0"
-                                           HorizontalAlignment="Center"
-                                           TextAlignment="Center"
-                                           VerticalAlignment="Center"
-                                       TextOptions.TextFormattingMode="Ideal"/>
-                            <TextBlock x:Name="PART_Label" Grid.Column="1"
-                                           HorizontalAlignment="Left"
-                                           TextAlignment="Left"
-                                           VerticalAlignment="Center"/>
-                            <!--
-                                <ContentPresenter Grid.Column="1"
-                                              HorizontalAlignment="Left"
-                                              VerticalAlignment="Center"/>-->
+                            <TextBlock
+                                x:Name="PART_Icon" Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                TextAlignment="Center"
+                                VerticalAlignment="Center"
+                                TextOptions.TextFormattingMode="Ideal"/>
+                            <TextBlock
+                                x:Name="PART_Label" Grid.Column="1"
+                                HorizontalAlignment="Left"
+                                TextAlignment="Left"
+                                VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <!--
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_Button" Property="Background" Value="#20000000" />
-                            <Setter TargetName="PART_Button" Property="BorderBrush" Value="Transparent" />
-                        </Trigger>
-                        <Trigger Property="IsPressed"  Value="True">
-                            <Setter TargetName="PART_Button" Property="Background" Value="#40000000" />
-                            <Setter TargetName="PART_Button" Property="BorderBrush" Value="Transparent" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled"  Value="False">
-                            <Setter TargetName="PART_Button" Property="Background" Value="Transparent" />
-                            <Setter TargetName="PART_Button" Property="Foreground" Value="LightGray"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -198,6 +198,7 @@ namespace WpfTools.Controls
             this.Items.ItemTemplate = this.ItemTemplate;
             this.Items.ItemsSource = this.RatingCollection;
 
+            this.Items.Loaded += (o, e) => this.SetRatingValue();
         }
 
 

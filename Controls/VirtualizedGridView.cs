@@ -472,7 +472,14 @@ namespace WpfTools.Controls
 
             if (!this.ColumnLengthInner.HasValue)
             {
-                var count = (int)(this.scrollableContent.ActualWidth / this.itemWidth.Value);
+                var frameWidth = this.scrollableContent.ActualWidth;
+
+                if (this.scrollViewer != null && this.scrollViewer.ScrollableHeight <= 0)
+                {
+                    frameWidth -= 17;
+                }
+
+                var count = (int)(frameWidth / this.itemWidth.Value);
                 if (count < 1)
                 {
                     count = 1;
