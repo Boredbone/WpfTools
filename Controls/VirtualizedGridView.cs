@@ -545,6 +545,11 @@ namespace WpfTools.Controls
 
             var top = this.desiredVerticalOffset;// this.scrollViewer.VerticalOffset;
 
+            if (this.desiredVerticalOffset > this.scrollViewer.ScrollableHeight)
+            {
+                top = this.scrollViewer.ScrollableHeight;
+            }
+
             //Debug.WriteLine(top);
 
             if (this.ScrollRequested > 0)
