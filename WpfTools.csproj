@@ -78,6 +78,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -103,6 +104,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\FileDropBehavior.cs" />
+    <Compile Include="Behaviors\FocusBehavior.cs" />
+    <Compile Include="Behaviors\FullScreenBehavior.cs" />
     <Compile Include="Behaviors\HyperlinkBehavior.cs" />
     <Compile Include="Behaviors\SliderBehavior.cs" />
     <Compile Include="Controls\ColorSelector.xaml.cs">
@@ -115,6 +118,9 @@
     <Compile Include="Controls\Rating.cs" />
     <Compile Include="Controls\SplitView.cs" />
     <Compile Include="Controls\VirtualizedGridView.cs" />
+    <Compile Include="XamlTools\Behaviors\SizeBehavior.cs" />
+    <Compile Include="XamlTools\Behaviors\StackGridBehavior.cs" />
+    <Compile Include="XamlTools\Behaviors\TextBoxBehavior.cs" />
     <Compile Include="XamlTools\Converters\ColorToBrushConverter.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="FolderSelectDialog.cs" />
