@@ -639,15 +639,27 @@ namespace WpfTools.Controls
                 var offset = row * this.itemHeight.Value + oldItemOffset;
 
                 this.ScrollToVerticalOffset(offset);
+                //this.desiredVerticalOffset = offset;
+                //this.ScrollRequested = 1;
+
+                //if (this.scrollViewer.VerticalOffset != offset && this.scrollViewer.ScrollableHeight > offset)
+                //{
+                //    this.ScrollToVerticalOffset(offset);
+                //}
+                //else
+                //{
+                //    this.desiredVerticalOffset = offset;
+                //}
 
             }
             else
             {
                 this.ColumnLengthInner = null;
                 this.itemHeight = null;
+                this.RenderItems();
             }
 
-            this.RenderItems();
+            //this.RenderItems();
 
             if (this.itemHeight.HasValue)
             //&& this.scrollableContent.ActualHeight < e.NewSize.Height + this.itemHeight.Value)
@@ -670,7 +682,10 @@ namespace WpfTools.Controls
         /// <param name="e"></param>
         private void scrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            this.desiredVerticalOffset = this.scrollViewer.VerticalOffset;
+            if (this.ScrollRequested <= 0)
+            {
+                this.desiredVerticalOffset = this.scrollViewer.VerticalOffset;
+            }
             if (this.ScrollRequested <= 1)
             {
                 this.RenderItems();
