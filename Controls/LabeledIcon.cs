@@ -226,12 +226,10 @@ namespace WpfTools.Controls
                 this.Icon.FontFamily = this.IconFontFamily;
             }
             this.Icon.FontSize = this.IconFontSize;
-
-            //this.ToolTip = this.Text;
+            
             if (this.ToolTip == null || this.ToolTip.ToString().Length <= 0)
             {
                 this.SetTooltip();
-                //this.ToolTip = this.Text;
             }
             else
             {
@@ -258,6 +256,5 @@ namespace WpfTools.Controls
                 this.ToolTip = $"{this.Text} ({this.Shortcut})";
             }
         }
-
     }
 }

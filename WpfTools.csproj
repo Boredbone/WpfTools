@@ -122,7 +122,7 @@
     <Compile Include="XamlTools\Behaviors\StackGridBehavior.cs" />
     <Compile Include="XamlTools\Behaviors\TextBoxBehavior.cs" />
     <Compile Include="XamlTools\Converters\ColorToBrushConverter.cs" />
-    <Compile Include="Extensions\ColorExtensions.cs" />
+    <Compile Include="Extensions\ColorHelper.cs" />
     <Compile Include="FolderSelectDialog.cs" />
     <Compile Include="NoOperationCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -136,55 +136,12 @@ namespace WpfTools.Controls
                 typeof(FlatButton), new PropertyMetadata(new SolidColorBrush(Colors.Black)));
 
         #endregion
-        //private Brush foreground;
+        
 
         static FlatButton()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(FlatButton),
                 new FrameworkPropertyMetadata(typeof(FlatButton)));
         }
-
-        public FlatButton()
-        {
-            //this.Visibility = Visibility.Collapsed;
-            //if (this.IsEnabled)
-            //{
-            //    this.Foreground = this.NormalForeground;
-            //}
-            //else
-            //{
-            //    this.Foreground = this.DisabledForeground;
-            //}
-
-            //this.foreground = this.Foreground;
-            //this.IsEnabledChanged += (o, e) =>
-            //{
-            //    if (this.IsEnabled)
-            //    {
-            //        //this.Foreground = this.foreground;
-            //    }
-            //    else
-            //    {
-            //        //this.Foreground = this.DisabledForeground;
-            //    }
-            //};
-        }
-
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            //this.Visibility = Visibility.Visible;
-            //if (this.IsEnabled)
-            //{
-            //    this.Foreground = this.NormalForeground;
-            //}
-            //else
-            //{
-            //    this.Foreground = this.DisabledForeground;
-            //}
-            //this.foreground = this.Foreground;
-        }
-
     }
 }

@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace WpfTools.Extensions
 {
-    public static class ColorExtensions
+    public static class ColorHelper
     {
         public static Color FromCode(uint code)
         {

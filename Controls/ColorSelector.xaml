@@ -177,17 +177,7 @@
         <!-- Preset -->
 
         <ItemsControl Grid.Row="2" ItemsSource="{Binding Presets,Mode=OneWay}">
-
-
-            <!--
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="{x:Type item}">
-                    <Setter Property="Margin" Value="0" />
-                    <Setter Property="Padding" Value="0" />
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                </Style>
-            </ItemsControl.ItemContainerStyle>-->
+            
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel />

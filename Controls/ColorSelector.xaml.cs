@@ -171,15 +171,7 @@ namespace WpfTools.Controls
                 .Select(x => Color.FromArgb(this.Alpha ? x[0] : (byte)0xFF, x[1], x[2], x[3]))
                 .ToReadOnlyReactiveProperty()
                 .AddTo(this.disposables);
-
-            //this.SelectedColor.Subscribe(x =>
-            //{
-            //    this.A.Value = x.A;
-            //    this.R.Value = x.R;
-            //    this.G.Value = x.G;
-            //    this.B.Value = x.B;
-            //})
-            //.AddTo(this.disposables);
+            
 
             this.Presets = new ObservableCollection<Color>(new[]
             {
@@ -194,21 +186,6 @@ namespace WpfTools.Controls
                 Colors.Yellow,
                 Colors.Orange,
                 Colors.Black,
-                //Color.FromRgb(255, 255, 255),
-                //Color.FromRgb(0, 255, 255),
-                //Color.FromRgb(255, 0, 255),
-                //Color.FromRgb(255, 255, 0),
-                //Color.FromRgb(0, 0, 255),
-                //Color.FromRgb(255, 0, 0),
-                //Color.FromRgb(0, 255, 0),
-                //Color.FromRgb(122, 255, 255),
-                //Color.FromRgb(255, 122, 255),
-                //Color.FromRgb(255, 255, 122),
-                //Color.FromRgb(122, 122, 255),
-                //Color.FromRgb(255, 122, 122),
-                //Color.FromRgb(122, 255, 122),
-                //Color.FromRgb(122, 122, 122),
-                //Color.FromRgb(0, 0, 0),
             });
 
             this.PresetCommand = new ReactiveCommand().AddTo(this.disposables);

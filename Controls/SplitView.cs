@@ -21,7 +21,8 @@ namespace WpfTools.Controls
     {
         static SplitView()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(SplitView), new FrameworkPropertyMetadata(typeof(SplitView)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(SplitView), 
+                new FrameworkPropertyMetadata(typeof(SplitView)));
         }
 
         #region CompactPaneLength
@@ -278,8 +279,7 @@ namespace WpfTools.Controls
                 var storyboard = new Storyboard();
 
                 var a = new DoubleAnimation();
-                // TargetName添付プロパティではなく、Target添付プロパティで
-                // 直接アニメーションのターゲットを指定しています。
+
                 Storyboard.SetTarget(a, this.pane);
                 Storyboard.SetTargetProperty(a, new PropertyPath("(Border.Width)"));
                 a.To = newPaneWidth;
@@ -292,8 +292,7 @@ namespace WpfTools.Controls
                 };
 
                 storyboard.Children.Add(a);
-
-                // アニメーションを開始します
+                
                 storyboard.Begin();
             }
             else
@@ -311,8 +310,6 @@ namespace WpfTools.Controls
 
         public SplitView()
         {
-            //InitializeComponent();
-
         }
 
         public override void OnApplyTemplate()
@@ -325,38 +322,21 @@ namespace WpfTools.Controls
             this.panePlace = this.GetTemplateChild("PART_panePlace") as Border;
             this.cover = this.GetTemplateChild("PART_cover") as Border;
 
-
-            this.pane.LostFocus += this.pane_LostFocus;
+            
             this.cover.MouseDown += this.cover_MouseDown;
 
             this.pane.Child = this.Pane;
             this.mainContent.Child = this.MainContent;
             this.middleContent.Child = this.MiddleContent;
             this.pane.Background = this.PaneBackground;
-
-            //this.IsPaneOpen = false;
-
+            
             this.RefreshView();
-        }
-
-        private void pane_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (this.DisplayMode == SplitViewDisplayMode.Overlay
-                || this.DisplayMode == SplitViewDisplayMode.CompactOverlay)
-            {
-                //this.IsPaneOpen = false;
-            }
         }
 
         private void cover_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.IsPaneOpen = false;
         }
-
-        //private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    this.RefreshView();
-        //}
     }
 
     public enum SplitViewDisplayMode

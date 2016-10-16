@@ -15,7 +15,11 @@ namespace Boredbone.XamlTools.Extensions
 {
     public static class DependencyObjectExtensions
     {
-        //--- 子要素を取得
+        /// <summary>
+        /// 子要素を取得
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static IEnumerable<DependencyObject> Children(this DependencyObject obj)
         {
             if (obj == null)
@@ -32,8 +36,12 @@ namespace Boredbone.XamlTools.Extensions
                     yield return child;
             }
         }
-
-        //--- 子孫要素を取得
+        
+        /// <summary>
+        /// 子孫要素を取得
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static IEnumerable<DependencyObject> Descendants(this DependencyObject obj)
         {
             if (obj == null)
@@ -46,15 +54,25 @@ namespace Boredbone.XamlTools.Extensions
                     yield return grandChild;
             }
         }
-
-        //--- 特定の型の子要素を取得
+        
+        /// <summary>
+        /// 特定の型の子要素を取得
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static IEnumerable<T> Children<T>(this DependencyObject obj)
             where T : DependencyObject
         {
             return obj.Children().OfType<T>();
         }
-
-        //--- 特定の型の子孫要素を取得
+        
+        /// <summary>
+        /// 特定の型の子孫要素を取得
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static IEnumerable<T> Descendants<T>(this DependencyObject obj)
             where T : DependencyObject
         {

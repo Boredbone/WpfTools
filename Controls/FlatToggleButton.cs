@@ -182,52 +182,12 @@ namespace WpfTools.Controls
 
         #endregion
 
-
-
-
-        //private Brush foreground;
+        
 
         static FlatToggleButton()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(FlatToggleButton),
                 new FrameworkPropertyMetadata(typeof(FlatToggleButton)));
-        }
-
-        public FlatToggleButton()
-        {
-            //this.foreground = this.Foreground;
-            //
-            //this.IsEnabledChanged += (o, e) => { this.SetForeground(); };
-            //this.Checked += (o, e) => { this.SetForeground(); };
-            //this.Unchecked += (o, e) => { this.SetForeground(); };
-        }
-
-        //private void SetForeground()
-        //{
-        //    return;
-        //    if (this.IsEnabled)
-        //    {
-        //        if (this.IsChecked == true)
-        //        {
-        //            this.Foreground = this.CheckedForeground;
-        //        }
-        //        else
-        //        {
-        //            this.Foreground = this.foreground;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        this.Foreground = this.DisabledForeground;
-        //    }
-        //
-        //}
-
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            //this.foreground = this.Foreground;
         }
     }
 }

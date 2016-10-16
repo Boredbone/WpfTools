@@ -142,48 +142,11 @@ namespace WpfTools.Controls
 
                 if (fe != null)
                 {
-                    //var margin = fe.Margin;
-                    //child.Measure(new Size
-                    //    (fe.Width + margin.Left + margin.Right, fe.Height + margin.Top + margin.Bottom));
                     child.Measure(new Size(fe.Width, fe.Height));
                 }
             }
 
             return base.MeasureOverride(availableSize);
-        }
-    }
-
-
-    public class FastCanvas2 : Canvas
-    {
-        private HashSet<UIElement> _virtualChildren = new HashSet<UIElement>();
-
-        public void AddElement(UIElement element)
-        {
-            _virtualChildren.Add(element);
-        }
-
-        public void RemoveElement(UIElement element)
-        {
-            _virtualChildren.Remove(element);
-        }
-
-        public void SetViewport(Rect rect)
-        {
-            foreach (FrameworkElement child in _virtualChildren)
-            {
-                var childRect = new Rect(Canvas.GetLeft(child), Canvas.GetTop(child), child.Width, child.Height);
-                if (!rect.IntersectsWith(childRect))
-                {
-                    if (Children.Contains(child))
-                        Children.Remove(child);
-                }
-                else
-                {
-                    if (!Children.Contains(child))
-                        Children.Add(child);
-                }
-            }
         }
     }
 }

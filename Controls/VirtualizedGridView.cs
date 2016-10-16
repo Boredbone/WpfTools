@@ -15,12 +15,8 @@ using System.Windows.Shapes;
 using System.Collections.Specialized;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Windows.Controls.Primitives;
 using Boredbone.Utility.Extensions;
-using Boredbone.XamlTools;
-using Boredbone.XamlTools.Extensions;
 using Reactive.Bindings.Extensions;
-using System.Windows.Threading;
 using Boredbone.Utility.Tools;
 using System.Diagnostics;
 
@@ -83,9 +79,6 @@ namespace WpfTools.Controls
         {
             var thisInstance = (VirtualizedGridView)d;
             thisInstance.RefreshSize();
-            //thisInstance.contentReference = null;
-            //thisInstance.Clear();
-            //thisInstance.RenderItems();
         }
 
         #endregion
@@ -105,7 +98,6 @@ namespace WpfTools.Controls
         private static void OnItemSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var thisInstance = d as VirtualizedGridView;
-            //var value = e.NewValue as Size?;
             if (thisInstance.itemSizeChangeCount++ > 0)
             {
                 thisInstance?.RefreshSize();
@@ -224,7 +216,6 @@ namespace WpfTools.Controls
 
             if (thisInstance != null && value.HasValue && value.Value)
             {
-                //Debug.WriteLine($"sc{thisInstance.requestedScrollIndex}");
                 thisInstance.ScrollRequested = 1;
                 thisInstance.RenderItems(true);
             }
@@ -291,7 +282,6 @@ namespace WpfTools.Controls
         private double? itemWidth = null;
         private double? itemHeight = null;
 
-        //private int ScrollRequested { get; set; } = 0;
         public int ScrollRequested
         {
             get { return _fieldScrollRequested; }
@@ -300,7 +290,6 @@ namespace WpfTools.Controls
                 if (_fieldScrollRequested != value)
                 {
                     _fieldScrollRequested = value;
-                    //Debug.WriteLine($"{nameof(this.ScrollRequested)}:{value} to {this.requestedScrollIndex}");
                 }
             }
         }
@@ -360,7 +349,6 @@ namespace WpfTools.Controls
                 || !this.itemHeight.HasValue || this.itemHeight.Value <= 0)
             {
                 this.Clear();
-                //this.CheckProperties();
                 this.RenderItems();
             }
         }
@@ -379,7 +367,6 @@ namespace WpfTools.Controls
 
                 list.CollectionChangedAsObservable()
                     .ObserveOnUIDispatcher()
-                    //.Where(_ => this.IsRefreshEnabled)
                     .Subscribe(this.OnCollectionChanged)
                     .AddTo(this.disposables);
             }
@@ -405,13 +392,8 @@ namespace WpfTools.Controls
             {
                 this.activeItems.ForEach(x => x.Value.Item.DataContext = null);
                 this.pool.ForEach(x => x.Item.DataContext = null);
-                //await Task.Delay(2000);
-
             }
-            //if (e.Action != NotifyCollectionChangedAction.Replace)
-            //{
             this.RenderItems();
-            //}
         }
 
         /// <summary>
@@ -419,7 +401,6 @@ namespace WpfTools.Controls
         /// </summary>
         private void Clear()
         {
-            //this.activeItems.ForEach(x => x.Value.Disable());
             this.activeItems.Clear();
             this.pool.Clear();
             this.ActiveLength = 0;
@@ -458,10 +439,9 @@ namespace WpfTools.Controls
             }
 
 
-            //var margin = default(Thickness);// firstItem.Margin;
             if (!this.itemWidth.HasValue)
             {
-                this.itemWidth = firstItem.Width;// + margin.Left + margin.Right;
+                this.itemWidth = firstItem.Width;
 
             }
 
@@ -488,7 +468,7 @@ namespace WpfTools.Controls
             }
             if (!this.itemHeight.HasValue)
             {
-                this.itemHeight = firstItem.Height;// + margin.Top + margin.Bottom;
+                this.itemHeight = firstItem.Height;
                 this.scrollableContent.Height
                     = Math.Ceiling((double)this.ItemsSource.Count / this.ColumnLengthInner.Value)
                         * this.itemHeight.Value;
@@ -525,13 +505,7 @@ namespace WpfTools.Controls
                 if (!this.IsPropertiesInitialised)
                 {
                     this.scrollableContent.Height = 0;
-                    //this.CheckProperties();
                 }
-
-                //if (!force && this.ScrollRequested > 0)
-                //{
-                //    //this.scrollRequested--;
-                //}
                 return;
             }
 
@@ -543,14 +517,13 @@ namespace WpfTools.Controls
                 }
             }
 
-            var top = this.desiredVerticalOffset;// this.scrollViewer.VerticalOffset;
+            var top = this.desiredVerticalOffset;
 
             if (this.desiredVerticalOffset > this.scrollViewer.ScrollableHeight)
             {
                 top = this.scrollViewer.ScrollableHeight;
             }
 
-            //Debug.WriteLine(top);
 
             if (this.ScrollRequested > 0)
             {
@@ -619,9 +592,8 @@ namespace WpfTools.Controls
         {
             if (this.IsPropertiesInitialised)
             {
-                var oldOffset = this.desiredVerticalOffset;// this.scrollViewer.VerticalOffset;
+                var oldOffset = this.desiredVerticalOffset;
                 var oldIndex = this.CurrentIndexInner + this.ColumnLengthInner.Value;
-                // (int)(oldOffset / this.itemHeight.Value) * this.ColumnLengthInner.Value;
                 var oldItemOffset = oldOffset % this.itemHeight.Value;
 
                 this.ColumnLengthInner = null;
@@ -639,39 +611,18 @@ namespace WpfTools.Controls
                 var offset = row * this.itemHeight.Value + oldItemOffset;
 
                 this.ScrollToVerticalOffset(offset);
-                //this.desiredVerticalOffset = offset;
-                //this.ScrollRequested = 1;
-
-                //if (this.scrollViewer.VerticalOffset != offset && this.scrollViewer.ScrollableHeight > offset)
-                //{
-                //    this.ScrollToVerticalOffset(offset);
-                //}
-                //else
-                //{
-                //    this.desiredVerticalOffset = offset;
-                //}
-
             }
             else
             {
                 this.ColumnLengthInner = null;
                 this.itemHeight = null;
-                this.RenderItems();
             }
 
-            //this.RenderItems();
+            this.RenderItems();
 
             if (this.itemHeight.HasValue)
-            //&& this.scrollableContent.ActualHeight < e.NewSize.Height + this.itemHeight.Value)
             {
                 this.scrollableContent.InvalidateArrange();
-                //this.Padding = (this.Padding.Bottom == 0) ? new Thickness(1) : new Thickness(0);
-                //if (this.activeItems.Count > 0)
-                //{
-                //    this.activeItems.First().Value.Item.Visibility =
-                //        (this.activeItems.First().Value.Item.Visibility==Visibility.Visible)?
-                //        Visibility.Collapsed:Visibility.Visible;
-                //}
             }
         }
 
@@ -704,8 +655,6 @@ namespace WpfTools.Controls
         /// <param name="index"></param>
         public void ScrollToIndex(int index)
         {
-            //Debug.WriteLine($"scrol to {index}");
-
             if (this.CurrentIndex != index && this.CurrentIndexInner != index)
             {
                 this.CurrentIndex = index;
@@ -725,14 +674,6 @@ namespace WpfTools.Controls
         /// <returns></returns>
         private ItemCacheContainer GenerateNewItem()
         {
-            //var item = this.ItemTemplate.LoadContent() as FrameworkElement;
-            //
-            //if (item == null)
-            //{
-            //    return null;
-            //    //throw new ArgumentException("Invalid ItemTemplate");
-            //}
-
             if (this.contentReference == null)
             {
                 this.contentReference = this.ItemTemplate.LoadContent() as FrameworkElement;
@@ -740,7 +681,6 @@ namespace WpfTools.Controls
                 if (this.contentReference == null)
                 {
                     return null;
-                    //throw new ArgumentException("Invalid ItemTemplate");
                 }
 
             }
@@ -751,30 +691,10 @@ namespace WpfTools.Controls
             {
                 Width = this.contentReference.Width + margin.Left + margin.Right,
                 Height = this.contentReference.Height + margin.Top + margin.Bottom,
-                //Margin = this.contentReference.Margin,
                 ContentTemplate = this.ItemTemplate,
                 IsTabStop = false,
             };
 
-            //if (this.sizeChangedSubscription == null)
-            //{
-            //    this.sizeChangedSubscription = contentReference.SizeChangedAsObservable()
-            //        .Skip(1)
-            //        .Subscribe(x =>
-            //        {
-            //            this.RefreshSize();
-            //        })
-            //        .AddTo(this.disposables);
-            //
-            //}
-
-            //if (this.scrollableContent.Children.Count <= 0)
-            //{
-            //    this.scrollableContent.Children.Add(new UIElement()
-            //    {
-            //        Visibility = Visibility.Collapsed,
-            //    });
-            //}
 
             var container = new ItemCacheContainer(item);
 
@@ -798,7 +718,6 @@ namespace WpfTools.Controls
 
             if (this.activeItems.TryGetValue(key, out item))
             {
-                //var item = this.activeItems[key];
                 item.Disable();
                 this.activeItems.Remove(key);
                 this.pool.Add(item);
@@ -818,12 +737,6 @@ namespace WpfTools.Controls
         {
             ItemCacheContainer item;
 
-
-            //if (this.activeItems.ContainsKey(index))
-            //{
-            //    item = this.activeItems[index];
-            //}
-            //else
             if (!this.activeItems.TryGetValue(index, out item))
             {
                 item = this.pool.FirstOrDefault();
@@ -841,9 +754,6 @@ namespace WpfTools.Controls
 
             var top = (index / this.ColumnLengthInner.Value) * this.itemHeight.Value;
             var left = (index % this.ColumnLengthInner.Value) * this.itemWidth.Value;
-
-            //item.Top = top;
-            //item.Left = left;
 
             item.Enable(index, dataContext, left, top);
 
@@ -871,8 +781,6 @@ namespace WpfTools.Controls
             public bool IsEnabled
                 => (this.Item == null) ? false : (this.Item.Visibility == Visibility.Visible);
 
-            //private bool isActive = false;
-
             public ItemCacheContainer(ContentControl item)
             {
                 this.Item = item;
@@ -884,7 +792,6 @@ namespace WpfTools.Controls
                 this.Item.Visibility = Visibility.Collapsed;
                 this.Item.DataContext = null;
                 this.Item.Content = null;
-                //this.isActive = false;
             }
 
             public void Enable(int index, object dataContext, double left, double top)
@@ -900,7 +807,6 @@ namespace WpfTools.Controls
                 this.Data.Index = index;
                 this.Data.Value = dataContext;
 
-                //this.Item.DataContext = this.Data;
                 this.Item.Content = this.Data;
                 this.Item.Visibility = Visibility.Visible;
             }

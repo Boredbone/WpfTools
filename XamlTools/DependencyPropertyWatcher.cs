@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Data;
-//using Windows.UI.Xaml;
-//using Windows.UI.Xaml.Data;
 
 namespace Boredbone.XamlTools
 {

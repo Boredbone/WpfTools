@@ -91,10 +91,6 @@ namespace WpfTools.Controls
             if (thisInstance != null)
             {
                 thisInstance.SetRatingValue();
-                //if (e.OldValue != e.OldValue)
-                //{
-                //    thisInstance.Slider.Value = (int)e.NewValue;
-                //}
             }
 
         }
@@ -206,7 +202,7 @@ namespace WpfTools.Controls
         {
             if (this.Slider != null)
             {
-                this.Slider.Maximum = this.Maximum + 0.49;// 0.5 - double.Epsilon;
+                this.Slider.Maximum = this.Maximum + 0.49;
             }
 
             this.RatingCollection.Clear();
@@ -221,11 +217,7 @@ namespace WpfTools.Controls
         {
             var rating = this.Value;
             this.RatingCollection
-                .ForEach((x, c) =>
-                {
-                    //x.Value = (c < rating) ? c + 1 : 0;
-                    x.IsSelected = (c < rating);
-                });
+                .ForEach((x, c) => x.IsSelected = (c < rating));
         }
     }
 

@@ -28,18 +28,12 @@ namespace Boredbone.XamlTools
         public void Cancel(bool throwOnFirstException)
         {
             this.CancellationTokenSource.Cancel(throwOnFirstException);
-            this.CanceledSubject.OnCompleted();//.OnError(new OperationCanceledException());
+            this.CanceledSubject.OnCompleted();
         }
         public void Cancel()
         {
             this.CancellationTokenSource.Cancel();
-            this.CanceledSubject.OnCompleted();//.OnError(new OperationCanceledException());
-        }
-
-        public override void Dispose()
-        {
-            //this.CanceledSubject.OnCompleted();
-            base.Dispose();
+            this.CanceledSubject.OnCompleted();
         }
     }
 }

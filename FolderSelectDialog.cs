@@ -24,18 +24,11 @@ namespace WpfTools
         {
             var dialog = new CommonOpenFileDialog()
             {
-                // フォルダーを開く設定に
                 IsFolderPicker = true,
-                // 読み取り専用フォルダ/コントロールパネルは開かない
-                //EnsureReadOnly = false,
                 AllowNonFileSystemItems = true,
                 EnsurePathExists = true,
                 EnsureFileExists = false,
-                //Multiselect = true,
             };
-            // パス指定
-            //dialog.DefaultDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
             this.Dialog = dialog;
         }
 
@@ -58,10 +51,6 @@ namespace WpfTools
                 default:
                     return null;
             }
-
-            //return (result == CommonFileDialogResult.Ok) ? true
-            //    : (result == CommonFileDialogResult.Cancel) ? false
-            //    : null;
         }
 
         public void Dispose()
