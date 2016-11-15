@@ -19,7 +19,7 @@ namespace WpfTools.Models
         public int Count => this.items.Count;
 
         private readonly List<BlockItem<T>> items;
-        private readonly int maxSize;
+        public readonly int maxSize;
 
 
         public Block(int id, int blockSize)

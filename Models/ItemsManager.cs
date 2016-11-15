@@ -173,6 +173,19 @@ namespace WpfTools.Models
             }
         }
 
+        public void Clear()
+        {
+            lock (this.lockObject)
+            {
+                var blockSize = CurrentBlock.maxSize;
+                this.blocks.Clear();
+                this.CurrentBlock = null;
+                this.countInner = 0;
+                this.AddBlock(new Block<T>(0, blockSize));
+                this.CountSubject.OnNext(this.countInner);
+            }
+        }
+
         public int GetReversedIndexOf(BlockItem<T> item)
         {
             if (item == null)

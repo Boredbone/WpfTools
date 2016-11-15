@@ -12,6 +12,7 @@ namespace WpfTools.Models
     {
         internal AppendableText View { get; set; }
 
+        public string LastText => this.View?.LastText;
 
         public void Write(string text)
         {
@@ -64,6 +65,8 @@ namespace WpfTools.Models
         {
             this.View?.ScrollToBottom();
         }
+
+        public void Clear() => this.View?.Clear();
 
         public void Dispose()
         {

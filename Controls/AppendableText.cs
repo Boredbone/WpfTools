@@ -171,6 +171,8 @@ namespace WpfTools.Controls
         }
         private BlockItem<FormattedText> _fieldLastItem = null;
 
+        public string LastText => this.LastItem?.Value?.Text;
+
         private List<TextBrush> textBrushes = new List<TextBrush>();
 
         private int marginLineCount = 3;
@@ -446,6 +448,19 @@ namespace WpfTools.Controls
             }
         }
 
+        public void Clear()
+        {
+            this.TopItem = null;
+            this.bottomItem = null;
+            this.LastItem = null;
+            this.textBrushes.Clear();
+            this.selectedItems.Clear();
+            this.topOffset = 0;
+            this.bottomOffset = 0;
+            this.Texts.Clear();
+            this.LastItem = this.Texts.Add(this.GenerateText(""));
+            this.RefreshTexts();
+        }
 
         public void Write(string text, params TextBrush[] brush)
         {
