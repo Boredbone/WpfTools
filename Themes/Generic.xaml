@@ -349,4 +349,175 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+
+    <Style TargetType="{x:Type control:PositionBar}">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type control:PositionBar}">
+                    <Border
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        x:Name="PART_RootBorder"
+                        Focusable="False">
+                        <Border
+                            x:Name="PART_Thumb"
+                            Background="{TemplateBinding Foreground}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Height="32"
+                            Focusable="False"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="IsMouseOver"  Value="True">
+                            <Setter TargetName="PART_Thumb" Property="Background"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=MouseOverForeground}" />
+                        </Trigger>
+
+                        <Trigger Property="IsMouseCaptureing"  Value="True">
+                            <Setter TargetName="PART_Thumb" Property="Background"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedForeground}" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled"  Value="False">
+                            <Setter TargetName="PART_Thumb" Property="Background"
+                                    Value="Transparent" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="RepeatButton" x:Key="flatRepeatButton">
+        <Setter Property="Foreground" Value="#606060"/>
+        <Setter Property="IsEnabled" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border
+                            Background="#f0f0f0" 
+                            BorderThickness="0"
+                            CornerRadius="0" x:Name="Border">
+                        <ContentPresenter
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center"/>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="#dadada" />
+                        </Trigger>
+                        <Trigger Property="IsPressed"  Value="True">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="#606060" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled"  Value="False">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="#f0f0f0" />
+
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="Black" />
+            </Trigger>
+            <Trigger Property="IsPressed"  Value="True">
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
+            <Trigger Property="IsEnabled"  Value="False">
+                <Setter Property="Foreground" Value="#bfbfbf" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type control:AppendableText}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type control:AppendableText}">
+                    <Border
+                        x:Name="PART_RootBorder"
+                        Focusable="True"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <local:FastCanvas
+                                Grid.Column="0" x:Name="PART_Canvas"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                ClipToBounds="True"
+                                Focusable="True">
+                                <local:FastCanvas.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem x:Name="PART_CopyMenu" Header="Copy selected texts"/>
+                                    </ContextMenu>
+                                </local:FastCanvas.ContextMenu>
+                            </local:FastCanvas>
+
+                            <Grid 
+                            Grid.Column="1" Width="17" VerticalAlignment="Stretch" HorizontalAlignment="Center"
+                            Background="#F0F0F0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <RepeatButton
+                                x:Name="PART_UpButton"
+                                Content="5" FontFamily="Marlett" Grid.Row="0"
+                                Width="17" Height="17"
+                                Style="{StaticResource flatRepeatButton}"/>
+                                <RepeatButton
+                                x:Name="PART_DownButton"
+                                Content="6" FontFamily="Marlett" Grid.Row="2"
+                                Width="17" Height="17"
+                                Style="{StaticResource flatRepeatButton}"/>
+
+                                <local:PositionBar
+                                x:Name="PART_Bar"
+                                Grid.Row="1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Minimum="0"
+                                Maximum="0"
+                                DisplayPosition="0"
+                                MinimumThumbHeight="16"
+                                IsReversed="True"
+                                Background="#F0F0F0"
+                                MouseOverForeground="#a6a6a6"
+                                PressedForeground="#606060"
+                                BorderThickness="0"
+                                Foreground="#cdcdcd">
+                                </local:PositionBar>
+
+                            </Grid>
+
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

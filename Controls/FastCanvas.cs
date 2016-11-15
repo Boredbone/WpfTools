@@ -140,7 +140,7 @@ namespace WpfTools.Controls
                 }
                 var fe = child as FrameworkElement;
 
-                if (fe != null)
+                if (fe != null && !double.IsNaN(fe.Width) && !double.IsNaN(fe.Height))
                 {
                     child.Measure(new Size(fe.Width, fe.Height));
                 }

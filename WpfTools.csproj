@@ -43,11 +43,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ReactiveProperty, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ReactiveProperty.3.0.1\lib\net46\ReactiveProperty.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\packages\ReactiveProperty.3.2.0\lib\net46\ReactiveProperty.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ReactiveProperty.NET46, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ReactiveProperty.3.0.1\lib\net46\ReactiveProperty.NET46.dll</HintPath>
+      <HintPath>..\packages\ReactiveProperty.3.2.0\lib\net46\ReactiveProperty.NET46.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -108,6 +108,7 @@
     <Compile Include="Behaviors\FullScreenBehavior.cs" />
     <Compile Include="Behaviors\HyperlinkBehavior.cs" />
     <Compile Include="Behaviors\SliderBehavior.cs" />
+    <Compile Include="Controls\AppendableText.cs" />
     <Compile Include="Controls\ColorSelector.xaml.cs">
       <DependentUpon>ColorSelector.xaml</DependentUpon>
     </Compile>
@@ -115,9 +116,14 @@
     <Compile Include="Controls\FlatButton.cs" />
     <Compile Include="Controls\FlatToggleButton.cs" />
     <Compile Include="Controls\LabeledIcon.cs" />
+    <Compile Include="Controls\PositionBar.cs" />
     <Compile Include="Controls\Rating.cs" />
     <Compile Include="Controls\SplitView.cs" />
     <Compile Include="Controls\VirtualizedGridView.cs" />
+    <Compile Include="Models\AppendableTextController.cs" />
+    <Compile Include="Models\Block.cs" />
+    <Compile Include="Models\BlockItem.cs" />
+    <Compile Include="Models\ItemsManager.cs" />
     <Compile Include="XamlTools\Behaviors\SizeBehavior.cs" />
     <Compile Include="XamlTools\Behaviors\StackGridBehavior.cs" />
     <Compile Include="XamlTools\Behaviors\TextBoxBehavior.cs" />
