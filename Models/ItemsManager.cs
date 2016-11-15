@@ -88,6 +88,10 @@ namespace WpfTools.Models
                     this.ItemsRemovedSubject.OnNext
                         (new ItemsRemovedEventArgs() { RemovedBlockId = removedId });
                 }
+                else
+                {
+                    this.countInner++;
+                }
             }
             else
             {

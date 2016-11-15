@@ -76,12 +76,30 @@ namespace WpfTools.Models
         public Brush Brush { get; }
         public int StartIndex { get; }
         public int Length { get; }
+        public bool IsBold { get; }
 
         public TextBrush(Brush brush, int startIndex, int length)
+            : this(brush, false, startIndex, length)
+        {
+        }
+
+        public TextBrush(bool bold, int startIndex, int length)
+            : this(null, bold, startIndex, length)
+        {
+        }
+
+        public TextBrush(Brush brush, bool bold, int startIndex, int length)
         {
             this.Brush = brush;
+            this.IsBold = bold;
             this.StartIndex = startIndex;
             this.Length = length;
+        }
+
+        public TextBrush AddOffset(int offset)
+        {
+            return new TextBrush
+                (this.Brush, this.IsBold, this.StartIndex + offset, this.Length);
         }
     }
 }
