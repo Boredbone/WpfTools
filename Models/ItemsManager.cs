@@ -83,7 +83,6 @@ namespace WpfTools.Models
                     this.blocks.RemoveAt(0);
 
                     this.countInner += 1 - blockSize;
-                    //this.CountSubject.OnNext(this.Count + 1 - blockSize);
 
                     this.ItemsRemovedSubject.OnNext
                         (new ItemsRemovedEventArgs() { RemovedBlockId = removedId });
@@ -96,7 +95,6 @@ namespace WpfTools.Models
             else
             {
                 this.countInner++;
-                //this.CountSubject.OnNext(this.Count + 1);
             }
         }
 

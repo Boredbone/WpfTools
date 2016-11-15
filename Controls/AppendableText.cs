@@ -122,6 +122,8 @@ namespace WpfTools.Controls
 
 
 
+
+
         private PositionBar bar = null;
         private FastCanvas canvas = null;
         private Border rootGrid = null;
@@ -130,8 +132,6 @@ namespace WpfTools.Controls
         private RepeatButton downButton = null;
 
         private Canvas lastLineMarker;
-
-        static Typeface TextFontFamily = new Typeface("Consolas");
 
         private readonly CompositeDisposable disposables;
 
@@ -166,7 +166,6 @@ namespace WpfTools.Controls
                 {
                     _fieldLastItem = value;
                 }
-                //this.textBrushes.Clear();
             }
         }
         private BlockItem<FormattedText> _fieldLastItem = null;
@@ -175,8 +174,9 @@ namespace WpfTools.Controls
 
         private List<TextBrush> textBrushes = new List<TextBrush>();
 
+        private Typeface TextFontFamily = new Typeface("Consolas");
+
         private int marginLineCount = 3;
-        private double fontSize = 14.0;
 
         private double remainingLineHeight = 0.0;
         private double unitLineHeight = 0.0;
@@ -191,7 +191,6 @@ namespace WpfTools.Controls
 
         private bool mouseCaptureing = false;
         private Point prevMousePosition = default(Point);
-
 
 
         private double pixelsPerDip = -1.0;
@@ -250,11 +249,6 @@ namespace WpfTools.Controls
                 }
             })
             .AddTo(this.disposables);
-
-
-            //this.RefreshLineSize();
-
-            //this.LastItem = this.Texts.Add(this.GenerateText(""));
         }
 
 
@@ -296,6 +290,8 @@ namespace WpfTools.Controls
 
             this.lastLineMarker.Background = this.LastLineBrush;
             this.canvas.Children.Add(this.lastLineMarker);
+
+            this.SetFontFamily(this.FontFamily);
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -304,14 +300,19 @@ namespace WpfTools.Controls
             this.LastItem = this.Texts.Add(this.GenerateText(""));
         }
 
+        public void SetFontFamily(FontFamily font)
+        {
+            this.TextFontFamily = new Typeface(font.Source);
+        }
+
         private FormattedText GenerateText(string text)
         {
             return new FormattedText(
                 text,
                 CultureInfo.CurrentUICulture,
                 FlowDirection.LeftToRight,
-                TextFontFamily,
-                this.fontSize,
+                this.TextFontFamily,
+                this.FontSize,
                 Brushes.Black,
                 this.PixelsPerDip)
             {
@@ -330,8 +331,8 @@ namespace WpfTools.Controls
                 text,
                 CultureInfo.CurrentUICulture,
                 FlowDirection.LeftToRight,
-                TextFontFamily,
-                this.fontSize,
+                this.TextFontFamily,
+                this.FontSize,
                 Brushes.Black,
                 this.PixelsPerDip)
             {
@@ -384,6 +385,10 @@ namespace WpfTools.Controls
 
         private void RefreshLineSize()
         {
+            if (!this.IsLoaded)
+            {
+                return;
+            }
             var line = this.GenerateText("\n\n\n");
             this.scrollLength = line.Height / 60.0;
             this.remainingLineHeight = line.Height / 3.0;
@@ -399,36 +404,7 @@ namespace WpfTools.Controls
 
             this.marginLineThreshold = (this.marginLineHeight + marginLinesUpper.Height) / 2.0;
 
-
         }
-
-        /*
-        public void Write(string text)
-        {
-            this.WriteMain(text, null);
-        }
-        public void Write(string text, Brush brush)
-        {
-            this.WriteMain(text, new TextBrush(brush, 0, text.Length));
-        }
-        public void Write(string text, params TextBrush[] brush)
-        {
-            this.WriteMain(text, brush);
-        }
-
-
-        public void WriteLine(string text)
-        {
-            this.WriteMain(text + "\n", null);
-        }
-        public void WriteLine(string text, Brush brush)
-        {
-            this.WriteMain(text + "\n", new TextBrush(brush, 0, text.Length));
-        }
-        public void WriteLine(string text, params TextBrush[] brush)
-        {
-            this.WriteMain(text + "\n", brush);
-        }*/
 
         public void AppendLine(FormattedText text)
         {
@@ -530,12 +506,7 @@ namespace WpfTools.Controls
         private void RefreshTexts()
         {
             if (this.bottomItem == null)
-            //&& this.bottomOffset > this.canvas.ActualHeight - this.marginLineThreshold)
             {
-                //TODO this.bottomItem == nullで，追加後の下端が閾値より下なら強制スクロール
-                //this.RefreshTexts(null, this.canvas.ActualHeight - this.marginLineHeight);
-
-
                 var offset = this.topOffset;
                 var item = this.TopItem;
                 var width = this.canvas.ActualWidth;
@@ -561,7 +532,6 @@ namespace WpfTools.Controls
                 if (scroll)
                 {
                     this.ScrollToBottomMain();
-                    //this.RefreshTexts(null, this.canvas.ActualHeight - this.marginLineHeight);
                 }
                 else
                 {
@@ -859,8 +829,6 @@ namespace WpfTools.Controls
             var item = this.GetItemFromPosition(p.Y);
 
             var rangeSelect = Keyboard.Modifiers == ModifierKeys.Shift;
-            //var rangeSelect = (Keyboard.GetKeyStates(Key.LeftShift).HasFlag(KeyStates.Down)
-            //    || Keyboard.GetKeyStates(Key.RightShift).HasFlag(KeyStates.Down));
 
             this.SelectItem(item, rangeSelect);
 
@@ -1079,11 +1047,6 @@ namespace WpfTools.Controls
             else if (e.Key == Key.Home)
             {
                 this.MoveToHome();
-                //var first = this.Texts.GetFirst();
-                //if (first != null)
-                //{
-                //    this.RefreshTexts(first, 0);
-                //}
             }
             else if (e.Key == Key.End)
             {
@@ -1137,9 +1100,6 @@ namespace WpfTools.Controls
                         {
                             this.valueChangedDisposable.Disposable = Disposable.Empty;
                         }
-                        //this.valueChangedDisposable.Disposable = (value != null)
-                        //    ? value.StateChanged.Subscribe(_ => this.Update())
-                        //    : Disposable.Empty;
                     }
                 }
             }
