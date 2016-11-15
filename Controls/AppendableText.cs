@@ -313,8 +313,11 @@ namespace WpfTools.Controls
                 FlowDirection.LeftToRight,
                 this.TextFontFamily,
                 this.FontSize,
-                Brushes.Black,
-                this.PixelsPerDip)
+                Brushes.Black
+#if !NET45
+                ,this.PixelsPerDip
+#endif
+                )
             {
                 Trimming = TextTrimming.None,
                 MaxTextWidth = this.canvas.ActualWidth,
@@ -333,8 +336,11 @@ namespace WpfTools.Controls
                 FlowDirection.LeftToRight,
                 this.TextFontFamily,
                 this.FontSize,
-                Brushes.Black,
-                this.PixelsPerDip)
+                Brushes.Black
+#if !NET45
+                ,this.PixelsPerDip
+#endif
+                )
             {
                 Trimming = TextTrimming.None,
                 MaxTextWidth = this.canvas.ActualWidth,
