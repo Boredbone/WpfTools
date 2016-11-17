@@ -264,6 +264,8 @@ namespace WpfTools.Controls
 
         private readonly Subject<Unit> updateRequestSubject;
 
+        private object textGeneratorGate = new object();
+
         public AppendableText()
         {
 
@@ -396,9 +398,31 @@ namespace WpfTools.Controls
         }
         private FormattedText GenerateText(string text, IEnumerable<TextBrush> brush)
         {
-            this.textBrushes.Clear();
-            return this.GenerateTextMain(text, brush);
+            lock (this.textGeneratorGate)
+            {
+                this.textBrushes.Clear();
+                return this.GenerateTextMain(text, brush);
+            }
         }
+
+        private FormattedText GenerateText(FormattedText target, string text, IEnumerable<TextBrush> brush)
+        {
+            lock (this.textGeneratorGate)
+            {
+                var currentLength = target.Text?.Length ?? 0;
+
+                if (currentLength == 0)
+                {
+                    this.textBrushes.Clear();
+                }
+
+                var brushs = (brush == null) ? null
+                    : brush.Where(x => x != null).Select(x => x.AddOffset(currentLength));
+
+                return this.GenerateTextMain(target.Text + text, brushs);
+            }
+        }
+
         private FormattedText GenerateTextMain(string text, IEnumerable<TextBrush> brush)
         {
             var ft = this.GenerateFormattedText(text);
@@ -434,20 +458,6 @@ namespace WpfTools.Controls
         }
 
 
-        private FormattedText GenerateText(FormattedText target, string text, IEnumerable<TextBrush> brush)
-        {
-            var currentLength = target.Text?.Length ?? 0;
-
-            if (currentLength == 0)
-            {
-                this.textBrushes.Clear();
-            }
-
-            var brushs = (brush == null) ? null
-                : brush.Where(x => x != null).Select(x => x.AddOffset(currentLength));
-
-            return this.GenerateTextMain(target.Text + text, brushs);
-        }
 
         private void RefreshLineSize()
         {
@@ -592,6 +602,7 @@ namespace WpfTools.Controls
             return height;
         }
 
+
         private void RefreshTexts(bool force)
         {
             if (force)
@@ -640,6 +651,7 @@ namespace WpfTools.Controls
             {
                 this.RefreshTexts(this.TopItem, this.topOffset);
             }
+
         }
 
         internal void ScrollToBottom()
@@ -759,8 +771,8 @@ namespace WpfTools.Controls
                     }
 
                     this.activeContainers.Add(container);
-
-                    FastCanvas.SetLocation(container, new Point(0.0, offset));
+                    
+                    FastCanvas.SetLocation(container, new Point(0.0, Math.Round(offset)));
 
                     if (offset <= 0.0)
                     {
@@ -788,9 +800,9 @@ namespace WpfTools.Controls
 
             if (lastLine != null && lastLine.NextItem == null)
             {
-                FastCanvas.SetLocation(this.lastLineMarker, new Point(0.0, lastLineOffset));
+                FastCanvas.SetLocation(this.lastLineMarker, new Point(0.0, Math.Floor(lastLineOffset)));
                 this.lastLineMarker.Width = this.canvas.ActualWidth;
-                this.lastLineMarker.Height = this.GetItemHeight(lastLine.Value);
+                this.lastLineMarker.Height = Math.Ceiling(this.GetItemHeight(lastLine.Value));
                 this.lastLineMarker.Visibility = Visibility.Visible;
             }
             else
