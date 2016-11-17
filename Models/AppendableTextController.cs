@@ -104,5 +104,20 @@ namespace WpfTools.Models
             return new TextBrush
                 (this.Brush, this.IsBold, this.StartIndex + offset, this.Length);
         }
+
+        public TextBrush CutStart(int offset)
+        {
+            var start = this.StartIndex - offset;
+            var length = this.Length;
+
+            if (start < 0)
+            {
+                length += start;
+                start = 0;
+            }
+            
+            return new TextBrush
+                (this.Brush, this.IsBold, start, length);
+        }
     }
 }

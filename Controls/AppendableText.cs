@@ -20,6 +20,9 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Controls.Primitives;
+using System.Reactive.Subjects;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace WpfTools.Controls
 {
@@ -121,6 +124,52 @@ namespace WpfTools.Controls
         #endregion
 
 
+        #region MaxBlockCount
+
+        public int MaxBlockCount
+        {
+            get { return (int)GetValue(MaxBlockCountProperty); }
+            set { SetValue(MaxBlockCountProperty, value); }
+        }
+
+        public static readonly DependencyProperty MaxBlockCountProperty =
+            DependencyProperty.Register(nameof(MaxBlockCount), typeof(int), typeof(AppendableText),
+            new PropertyMetadata(0, new PropertyChangedCallback(OnMaxBlockCountChanged)));
+
+        private static void OnMaxBlockCountChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as AppendableText;
+            if (thisInstance != null)
+            {
+                thisInstance.Texts.MaxBlockCount = (int)e.NewValue;
+            }
+        }
+
+        #endregion
+
+        #region BlockSize
+
+        public int BlockSize
+        {
+            get { return (int)GetValue(BlockSizeProperty); }
+            set { SetValue(BlockSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty BlockSizeProperty =
+            DependencyProperty.Register(nameof(BlockSize), typeof(int), typeof(AppendableText),
+            new PropertyMetadata(0, new PropertyChangedCallback(OnBlockSizeChanged)));
+
+        private static void OnBlockSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as AppendableText;
+            if (thisInstance != null)
+            {
+                thisInstance.Texts.BlockSize = (int)e.NewValue;
+            }
+        }
+
+        #endregion
+
 
 
 
@@ -175,6 +224,7 @@ namespace WpfTools.Controls
         private List<TextBrush> textBrushes = new List<TextBrush>();
 
         private Typeface TextFontFamily = new Typeface("Consolas");
+        private double textFontSize = 10.0;
 
         private int marginLineCount = 3;
 
@@ -212,6 +262,10 @@ namespace WpfTools.Controls
             }
         }
 
+        private readonly Subject<Unit> updateRequestSubject;
+
+        private object textGeneratorGate = new object();
+
         public AppendableText()
         {
 
@@ -219,29 +273,41 @@ namespace WpfTools.Controls
 
             this.lastLineMarker = new Canvas();
 
+            this.updateRequestSubject = new Subject<Unit>().AddTo(this.disposables);
+
             this.Texts = new ItemsManager<FormattedText>().AddTo(this.disposables);
+
             this.Texts.ItemsAdded
+                .Select(_ => Unit.Default)
+                .Merge(this.updateRequestSubject)
+                .ObserveOnUIDispatcher()
                 .Subscribe(_ =>
                 {
                     if (this.TopItem == null)
                     {
                         this.TopItem = this.Texts.CurrentBlock.Last;
                     }
-                    this.RefreshTexts();
+                    this.RefreshTexts(false);
+
+                    if (this.bar != null)
+                    {
+                        this.SetCount(this.Texts.Count);
+                        this.UpdateCurrentIndex();
+                    }
                 })
                 .AddTo(this.disposables);
 
-            this.Texts.CountChanged.Subscribe(x =>
-            {
-                if (this.bar != null)
-                {
-                    this.SetCount(x);
-                    this.UpdateCurrentIndex();
-                }
-            })
-            .AddTo(this.disposables);
+            //this.Texts.CountChanged.ObserveOnUIDispatcher().Subscribe(x =>
+            //{
+            //    if (this.bar != null)
+            //    {
+            //        this.SetCount(x);
+            //        this.UpdateCurrentIndex();
+            //    }
+            //})
+            //.AddTo(this.disposables);
 
-            this.Texts.ItemsRemoved.Subscribe(x =>
+            this.Texts.ItemsRemoved.ObserveOnUIDispatcher().Subscribe(x =>
             {
                 if (this.TopItem != null && this.TopItem.Parent.Id == x.RemovedBlockId)
                 {
@@ -296,25 +362,35 @@ namespace WpfTools.Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            this.textFontSize = this.FontSize;
             this.RefreshLineSize();
-            this.LastItem = this.Texts.Add(this.GenerateText(""));
+            this.LastItem = this.Texts.Add(this.GenerateFormattedText(""));
         }
 
         public void SetFontFamily(FontFamily font)
         {
             this.TextFontFamily = new Typeface(font.Source);
         }
+        public void SetFontSize(double fontSize)
+        {
+            this.FontSize = fontSize;
+            this.textFontSize = this.FontSize;
+        }
 
-        private FormattedText GenerateText(string text)
+
+        private FormattedText GenerateFormattedText(string text)
         {
             return new FormattedText(
                 text,
                 CultureInfo.CurrentUICulture,
                 FlowDirection.LeftToRight,
                 this.TextFontFamily,
-                this.FontSize,
-                Brushes.Black,
-                this.PixelsPerDip)
+                this.textFontSize,
+                Brushes.Black
+#if !NET45
+                ,this.PixelsPerDip
+#endif
+                )
             {
                 Trimming = TextTrimming.None,
                 MaxTextWidth = this.canvas.ActualWidth,
@@ -322,24 +398,34 @@ namespace WpfTools.Controls
         }
         private FormattedText GenerateText(string text, IEnumerable<TextBrush> brush)
         {
-            this.textBrushes.Clear();
-            return this.GenerateTextMain(text, brush);
+            lock (this.textGeneratorGate)
+            {
+                this.textBrushes.Clear();
+                return this.GenerateTextMain(text, brush);
+            }
         }
+
+        private FormattedText GenerateText(FormattedText target, string text, IEnumerable<TextBrush> brush)
+        {
+            lock (this.textGeneratorGate)
+            {
+                var currentLength = target.Text?.Length ?? 0;
+
+                if (currentLength == 0)
+                {
+                    this.textBrushes.Clear();
+                }
+
+                var brushs = (brush == null) ? null
+                    : brush.Where(x => x != null).Select(x => x.AddOffset(currentLength));
+
+                return this.GenerateTextMain(target.Text + text, brushs);
+            }
+        }
+
         private FormattedText GenerateTextMain(string text, IEnumerable<TextBrush> brush)
         {
-            var ft = new FormattedText(
-                text,
-                CultureInfo.CurrentUICulture,
-                FlowDirection.LeftToRight,
-                this.TextFontFamily,
-                this.FontSize,
-                Brushes.Black,
-                this.PixelsPerDip)
-            {
-                Trimming = TextTrimming.None,
-                MaxTextWidth = this.canvas.ActualWidth,
-            };
-
+            var ft = this.GenerateFormattedText(text);
 
             if (brush != null)
             {
@@ -352,6 +438,10 @@ namespace WpfTools.Controls
                 if (b.StartIndex + b.Length > text.Length)
                 {
                     length = text.Length - b.StartIndex;
+                }
+                if (length <= 0)
+                {
+                    continue;
                 }
                 if (b.Brush != null)
                 {
@@ -368,20 +458,6 @@ namespace WpfTools.Controls
         }
 
 
-        private FormattedText GenerateText(FormattedText target, string text, IEnumerable<TextBrush> brush)
-        {
-            var currentLength = this.LastItem?.Value?.Text.Length ?? 0;
-
-            if (currentLength == 0)
-            {
-                this.textBrushes.Clear();
-            }
-
-            var brushs = (brush == null) ? null
-                : brush.Where(x => x != null).Select(x => x.AddOffset(currentLength));
-
-            return this.GenerateTextMain(target.Text + text, brushs);
-        }
 
         private void RefreshLineSize()
         {
@@ -389,17 +465,17 @@ namespace WpfTools.Controls
             {
                 return;
             }
-            var line = this.GenerateText("\n\n\n");
+            var line = this.GenerateFormattedText("\n\n\n");
             this.scrollLength = line.Height / 60.0;
             this.remainingLineHeight = line.Height / 3.0;
             this.unitLineHeight = line.Height / 3.0;
 
-            var marginLines = this.GenerateText
+            var marginLines = this.GenerateFormattedText
                 (new string(Enumerable.Range(0, this.marginLineCount).Select(_ => '\n').ToArray()));
 
             this.marginLineHeight = marginLines.Height;
 
-            var marginLinesUpper = this.GenerateText
+            var marginLinesUpper = this.GenerateFormattedText
                 (new string(Enumerable.Range(0, this.marginLineCount + 1).Select(_ => '\n').ToArray()));
 
             this.marginLineThreshold = (this.marginLineHeight + marginLinesUpper.Height) / 2.0;
@@ -417,6 +493,7 @@ namespace WpfTools.Controls
             if (this.LastItem != null)
             {
                 this.LastItem.Value = text;
+                this.updateRequestSubject.OnNext(Unit.Default);
             }
             else
             {
@@ -434,8 +511,8 @@ namespace WpfTools.Controls
             this.topOffset = 0;
             this.bottomOffset = 0;
             this.Texts.Clear();
-            this.LastItem = this.Texts.Add(this.GenerateText(""));
-            this.RefreshTexts();
+            this.LastItem = this.Texts.Add(this.GenerateFormattedText(""));
+            this.RefreshTexts(true);
         }
 
         public void Write(string text, params TextBrush[] brush)
@@ -443,6 +520,11 @@ namespace WpfTools.Controls
             var lines = text.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
 
             List<FormattedText> items = null;
+
+            var updated = false;
+            var refresh = false;
+
+            var brushes = (brush == null) ? new TextBrush[0] : brush;
 
             for (int i = 0; i < lines.Length; i++)
             {
@@ -457,15 +539,18 @@ namespace WpfTools.Controls
                     //{
                     if (this.LastItem.Value != null)
                     {
-                        this.LastItem.Value = this.GenerateText(this.LastItem.Value, line, brush);
+                        this.LastItem.Value = this.GenerateText(this.LastItem.Value, line, brushes);
+                        updated = true;
                     }
                     else
                     {
-                        this.LastItem.Value = this.GenerateText(line, brush);
+                        this.LastItem.Value = this.GenerateText(line, brushes);
+                        updated = true;
                     }
                     if (lines.Length == 1)
                     {
-                        this.RefreshTexts();
+                        refresh = true;
+                        //this.RefreshTexts();
                     }
                     //}
                 }
@@ -475,16 +560,30 @@ namespace WpfTools.Controls
                     {
                         items = new List<FormattedText>();
                     }
-                    var item = this.GenerateText(line, brush);
+                    var item = this.GenerateText(line, brushes);
                     items.Add(item);
                     //this.LastItem = (line.Length == 0) ? null : this.Texts.Add(item);
                 }
+
+                brushes = brushes
+                    .Select(x => x.CutStart(line.Length + 1))
+                    .Where(x => x.Length >= 0)
+                    .ToArray();
             }
 
             if (items != null && items.Count > 0)
             {
                 var last = this.Texts.AddRange(items);
                 this.LastItem = last; //(last.Value.Text.Length == 0) ? null : last;
+            }
+            else if (refresh)
+            {
+                this.updateRequestSubject.OnNext(Unit.Default);
+                //this.RefreshTexts();
+            }
+            else if (updated)
+            {
+                this.updateRequestSubject.OnNext(Unit.Default);
             }
         }
 
@@ -503,8 +602,13 @@ namespace WpfTools.Controls
             return height;
         }
 
-        private void RefreshTexts()
+
+        private void RefreshTexts(bool force)
         {
+            if (force)
+            {
+                this.refreshFlag = true;
+            }
             if (this.bottomItem == null)
             {
                 var offset = this.topOffset;
@@ -539,7 +643,7 @@ namespace WpfTools.Controls
                 }
 
             }
-            else if (this.bottomItem != null && this.bottomItem.NextItem != null && !this.refreshFlag)
+            else if (this.bottomItem != null && this.bottomItem.NextItem != null && !force)
             {
                 return;
             }
@@ -547,6 +651,7 @@ namespace WpfTools.Controls
             {
                 this.RefreshTexts(this.TopItem, this.topOffset);
             }
+
         }
 
         internal void ScrollToBottom()
@@ -666,8 +771,8 @@ namespace WpfTools.Controls
                     }
 
                     this.activeContainers.Add(container);
-
-                    FastCanvas.SetLocation(container, new Point(0.0, offset));
+                    
+                    FastCanvas.SetLocation(container, new Point(0.0, Math.Round(offset)));
 
                     if (offset <= 0.0)
                     {
@@ -695,9 +800,9 @@ namespace WpfTools.Controls
 
             if (lastLine != null && lastLine.NextItem == null)
             {
-                FastCanvas.SetLocation(this.lastLineMarker, new Point(0.0, lastLineOffset));
+                FastCanvas.SetLocation(this.lastLineMarker, new Point(0.0, Math.Floor(lastLineOffset)));
                 this.lastLineMarker.Width = this.canvas.ActualWidth;
-                this.lastLineMarker.Height = this.GetItemHeight(lastLine.Value);
+                this.lastLineMarker.Height = Math.Ceiling(this.GetItemHeight(lastLine.Value));
                 this.lastLineMarker.Visibility = Visibility.Visible;
             }
             else
@@ -721,6 +826,11 @@ namespace WpfTools.Controls
                 }
             }
 
+            foreach (var c in activeContainers)
+            {
+                c.Refresh();
+            }
+
             this.refreshFlag = false;
 
             this.canvas.InvalidateArrange();
@@ -742,8 +852,7 @@ namespace WpfTools.Controls
 
         private void canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.refreshFlag = true;
-            this.RefreshTexts();
+            this.RefreshTexts(true);
         }
 
 
@@ -806,6 +915,17 @@ namespace WpfTools.Controls
                 .Write(string.Join("\r\n", text.Replace("u", "\n").Split('\n')
                 .Select((x, c) => string.IsNullOrWhiteSpace(x) ? "" : $"{c}:{x}")));
 
+            this.Controller.Write
+                ("    textBlock1.Inlines.Add(new Under\nline(new Run(\"lightwe\night\")));",
+                new TextBrush(Brushes.Blue, 27, 3),
+                new TextBrush(new SolidColorBrush(Color.FromRgb(43, 145, 175)), 31, 10),
+                new TextBrush(Brushes.Blue, 42, 3),
+                new TextBrush(new SolidColorBrush(Color.FromRgb(43, 145, 175)), 46, 3),
+                new TextBrush(new SolidColorBrush(Color.FromRgb(163, 21, 21)), 50, 14));
+
+            this.Controller.Write("    //textBlock1.Inlines\n.Add(new Italic(new Run(\"small\")));",
+                Brushes.Green);
+
             this.Controller
                 .Write($"{count++}:MainWindow.xaml の相互作用ロジック {DateTime.Now}");
 
@@ -852,6 +972,10 @@ namespace WpfTools.Controls
 
             if (item == null)
             {
+                if (prevSelectedCount > 0)
+                {
+                    this.RefreshTexts(true);
+                }
                 return;
             }
 
@@ -908,6 +1032,8 @@ namespace WpfTools.Controls
                     this.selectedItems.Add(item);
                 }
             }
+
+            this.RefreshTexts(true);
         }
 
         private BlockItem<FormattedText> GetItemFromPosition(double y)
@@ -1130,7 +1256,7 @@ namespace WpfTools.Controls
                     {
                         if (source.IsSelected)
                         {
-                            var rect = new Rect(0, 0, text.Width, text.Height);
+                            var rect = new Rect(0, 0, text.Width, Math.Ceiling(text.Height));
                             dc.DrawRectangle(selectionBrush, border, rect);
                         }
                         dc.DrawText(text, default(Point));
@@ -1139,9 +1265,16 @@ namespace WpfTools.Controls
                 }
             }
 
+            public void Refresh()
+            {
+                if (this.IsTextChanged)
+                {
+                    this.InvalidateVisual();
+                }
+            }
+
             public void Update()
             {
-                this.InvalidateVisual();
                 this.IsTextChanged = true;
             }
 

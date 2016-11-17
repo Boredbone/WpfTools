@@ -16,9 +16,38 @@ namespace WpfTools.Models
         private readonly List<Block<T>> blocks;
         public Block<T> CurrentBlock { get; private set; }
 
-        public int MaxBlockCount { get; }
+        public int MaxBlockCount
+        {
+            get { return _fieldMaxBlockCount; }
+            set
+            {
+                if (_fieldMaxBlockCount != value)
+                {
+                    this.CheckBlockSize(this.BlockSize, value);
+                    _fieldMaxBlockCount = value;
+                }
+            }
+        }
+        private int _fieldMaxBlockCount;
 
-        public BehaviorSubject<int> CountSubject { get; }
+        public int BlockSize
+        {
+            get { return _fieldBlockSize; }
+            set
+            {
+                if (_fieldBlockSize != value)
+                {
+                    this.CheckBlockSize(value, this.MaxBlockCount);
+                    _fieldBlockSize = value;
+                    this.Clear();
+                }
+            }
+        }
+        private int _fieldBlockSize;
+
+
+
+        private BehaviorSubject<int> CountSubject { get; }
         public IObservable<int> CountChanged => this.CountSubject.AsObservable();
         public int Count => this.CountSubject.Value;
         private int countInner;
@@ -40,6 +69,25 @@ namespace WpfTools.Models
 
         public ItemsManager(int blockSize, int maxBlockCount)
         {
+            this.CheckBlockSize(blockSize, maxBlockCount);
+            this.countInner = 0;
+
+            this.disposables = new CompositeDisposable();
+
+            this.ItemsAddedSubject = new Subject<ItemsAddedEventArgs>().AddTo(this.disposables);
+            this.ItemsRemovedSubject = new Subject<ItemsRemovedEventArgs>().AddTo(this.disposables);
+            this.CountSubject = new BehaviorSubject<int>(this.countInner).AddTo(this.disposables);
+
+
+            this._fieldMaxBlockCount = maxBlockCount;
+            this._fieldBlockSize = blockSize;
+
+            this.blocks = new List<Block<T>>();
+            this.AddBlock(new Block<T>(0, this.BlockSize));
+        }
+
+        private void CheckBlockSize(int blockSize, int maxBlockCount)
+        {
             if (maxBlockCount < 2 || maxBlockCount >= Block<T>.maxId)
             {
                 throw new ArgumentException(nameof(maxBlockCount));
@@ -48,18 +96,6 @@ namespace WpfTools.Models
             {
                 throw new ArgumentException("size over");
             }
-            this.countInner = 0;
-
-            this.disposables = new CompositeDisposable();
-
-            this.ItemsAddedSubject = new Subject<ItemsAddedEventArgs>().AddTo(this.disposables);
-            this.ItemsRemovedSubject = new Subject<ItemsRemovedEventArgs>().AddTo(this.disposables);
-            this.CountSubject = new BehaviorSubject<int>(this.countInner).AddTo(this.disposables);
-            
-
-            this.MaxBlockCount = maxBlockCount;
-            this.blocks = new List<Block<T>>();
-            this.AddBlock(new Block<T>(0, blockSize));
         }
 
         private void AddBlock(Block<T> block)
@@ -175,11 +211,10 @@ namespace WpfTools.Models
         {
             lock (this.lockObject)
             {
-                var blockSize = CurrentBlock.maxSize;
                 this.blocks.Clear();
                 this.CurrentBlock = null;
                 this.countInner = 0;
-                this.AddBlock(new Block<T>(0, blockSize));
+                this.AddBlock(new Block<T>(0, this.BlockSize));
                 this.CountSubject.OnNext(this.countInner);
             }
         }

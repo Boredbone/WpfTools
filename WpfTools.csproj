@@ -34,14 +34,6 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="ReactiveProperty, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ReactiveProperty.3.2.0\lib\net46\ReactiveProperty.dll</HintPath>
       <Private>True</Private>
@@ -129,7 +121,6 @@
     <Compile Include="XamlTools\Behaviors\TextBoxBehavior.cs" />
     <Compile Include="XamlTools\Converters\ColorToBrushConverter.cs" />
     <Compile Include="Extensions\ColorHelper.cs" />
-    <Compile Include="FolderSelectDialog.cs" />
     <Compile Include="NoOperationCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
