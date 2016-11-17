@@ -170,6 +170,27 @@ namespace WpfTools.Controls
 
         #endregion
 
+        #region MarginLineCount
+
+        public int MarginLineCount
+        {
+            get { return (int)GetValue(MarginLineCountProperty); }
+            set { SetValue(MarginLineCountProperty, value); }
+        }
+
+        public static readonly DependencyProperty MarginLineCountProperty =
+            DependencyProperty.Register(nameof(MarginLineCount), typeof(int), typeof(AppendableText),
+            new PropertyMetadata(3, new PropertyChangedCallback(OnMarginLineCountChanged)));
+
+        private static void OnMarginLineCountChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var thisInstance = d as AppendableText;
+            thisInstance?.RefreshLineSize();
+        }
+
+        #endregion
+
+
 
 
 
@@ -226,13 +247,13 @@ namespace WpfTools.Controls
         private Typeface textFontFamily = new Typeface("Consolas");
         private double textFontSize = 10.0;
 
-        private int marginLineCount = 3;
+        //private int marginLineCount = 3;
 
         private double remainingLineHeight = 0.0;
         private double unitLineHeight = 0.0;
         private double scrollLength = 0.0;
         private double marginLineHeight = 0.0;
-        private double marginLineThreshold = 0.0;
+        //private double marginLineThreshold = 0.0;
 
 
         private bool refreshFlag = false;
@@ -470,15 +491,21 @@ namespace WpfTools.Controls
             this.remainingLineHeight = line.Height / 3.0;
             this.unitLineHeight = line.Height / 3.0;
 
-            var marginLines = this.GenerateFormattedText
-                (new string(Enumerable.Range(0, this.marginLineCount).Select(_ => '\n').ToArray()));
+            if (this.MarginLineCount <= 0)
+            {
+                this.marginLineHeight = 0.0;
+            }
+            else
+            {
+                var marginLines = this.GenerateFormattedText
+                    (new string(Enumerable.Range(0, this.MarginLineCount).Select(_ => '\n').ToArray()));
 
-            this.marginLineHeight = marginLines.Height;
+                this.marginLineHeight = marginLines.Height;
+            }
+            //var marginLinesUpper = this.GenerateFormattedText
+            //    (new string(Enumerable.Range(0, this.marginLineCount + 1).Select(_ => '\n').ToArray()));
 
-            var marginLinesUpper = this.GenerateFormattedText
-                (new string(Enumerable.Range(0, this.marginLineCount + 1).Select(_ => '\n').ToArray()));
-
-            this.marginLineThreshold = (this.marginLineHeight + marginLinesUpper.Height) / 2.0;
+            //this.marginLineThreshold = (this.marginLineHeight + marginLinesUpper.Height) / 2.0;
 
         }
 
@@ -771,7 +798,7 @@ namespace WpfTools.Controls
                     }
 
                     this.activeContainers.Add(container);
-                    
+
                     FastCanvas.SetLocation(container, new Point(0.0, Math.Round(offset)));
 
                     if (offset <= 0.0)
