@@ -223,7 +223,7 @@ namespace WpfTools.Controls
 
         private List<TextBrush> textBrushes = new List<TextBrush>();
 
-        private Typeface TextFontFamily = new Typeface("Consolas");
+        private Typeface textFontFamily = new Typeface("Consolas");
         private double textFontSize = 10.0;
 
         private int marginLineCount = 3;
@@ -369,7 +369,7 @@ namespace WpfTools.Controls
 
         public void SetFontFamily(FontFamily font)
         {
-            this.TextFontFamily = new Typeface(font.Source);
+            this.textFontFamily = new Typeface(font.Source);
         }
         public void SetFontSize(double fontSize)
         {
@@ -384,7 +384,7 @@ namespace WpfTools.Controls
                 text,
                 CultureInfo.CurrentUICulture,
                 FlowDirection.LeftToRight,
-                this.TextFontFamily,
+                this.textFontFamily,
                 this.textFontSize,
                 Brushes.Black
 #if !NET45
