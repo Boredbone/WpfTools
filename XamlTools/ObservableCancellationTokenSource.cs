@@ -29,11 +29,13 @@ namespace Boredbone.XamlTools
         {
             this.CancellationTokenSource.Cancel(throwOnFirstException);
             this.CanceledSubject.OnCompleted();
+            //this.Dispose();
         }
         public void Cancel()
         {
             this.CancellationTokenSource.Cancel();
             this.CanceledSubject.OnCompleted();
+            //this.Dispose();
         }
     }
 }
