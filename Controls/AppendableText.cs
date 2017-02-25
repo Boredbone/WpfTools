@@ -1084,6 +1084,33 @@ namespace WpfTools.Controls
             this.RefreshTexts(true);
         }
 
+        /// <summary>
+        /// 全選択
+        /// </summary>
+        private void SelectAll()
+        {
+
+            this.selectedItems.Clear();
+
+            var nextItem = this.Texts.CurrentBlock.Last;
+
+            while (true)
+            {
+                nextItem.IsSelected = true;
+                this.selectedItems.Add(nextItem);
+
+                //^
+                nextItem = nextItem.PrevItem;
+
+                if (nextItem == null)
+                {
+                    break;
+                }
+            }
+
+            this.RefreshTexts(true);
+        }
+
         private BlockItem<FormattedText> GetItemFromPosition(double y)
         {
             var item = this.TopItem;
@@ -1226,10 +1253,10 @@ namespace WpfTools.Controls
             {
                 this.ScrollToBottom();
             }
-            else if (e.Key == Key.NumPad5)
-            {
-                this.Test();
-            }
+            //else if (e.Key == Key.NumPad5)
+            //{
+            //    this.Test();
+            //}
             //else if (e.Key == Key.Up)
             //{
             //    this.MoveUp();
@@ -1241,6 +1268,10 @@ namespace WpfTools.Controls
             else if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control)
             {
                 this.CopySelectedTexts();
+            }
+            else if (e.Key == Key.A && Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                this.SelectAll();
             }
         }
 

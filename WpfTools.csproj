@@ -112,6 +112,7 @@
     <Compile Include="Controls\Rating.cs" />
     <Compile Include="Controls\SplitView.cs" />
     <Compile Include="Controls\VirtualizedGridView.cs" />
+    <Compile Include="Extensions\VisualExtensions.cs" />
     <Compile Include="Models\AppendableTextController.cs" />
     <Compile Include="Models\Block.cs" />
     <Compile Include="Models\BlockItem.cs" />
