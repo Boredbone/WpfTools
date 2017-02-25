@@ -240,6 +240,8 @@ namespace WpfTools.Controls
         }
         private BlockItem<FormattedText> _fieldLastItem = null;
 
+        private object lastItemLock = new object();
+
         public string LastText => this.LastItem?.Value?.Text;
 
         private List<TextBrush> textBrushes = new List<TextBrush>();
@@ -385,7 +387,10 @@ namespace WpfTools.Controls
         {
             this.textFontSize = this.FontSize;
             this.RefreshLineSize();
-            this.LastItem = this.Texts.Add(this.GenerateFormattedText(""));
+            lock (this.lastItemLock)
+            {
+                this.LastItem = this.Texts.Add(this.GenerateFormattedText(""));
+            }
         }
 
         public void SetFontFamily(FontFamily font)
@@ -512,19 +517,25 @@ namespace WpfTools.Controls
         public void AppendLine(FormattedText text)
         {
             this.Texts.Add(text);
-            this.LastItem = null;
+            lock (this.lastItemLock)
+            {
+                this.LastItem = null;
+            }
         }
 
         public void ReplaceLine(FormattedText text)
         {
-            if (this.LastItem != null)
+            lock (this.lastItemLock)
             {
-                this.LastItem.Value = text;
-                this.updateRequestSubject.OnNext(Unit.Default);
-            }
-            else
-            {
-                this.LastItem = this.Texts.Add(text);
+                if (this.LastItem != null)
+                {
+                    this.LastItem.Value = text;
+                    this.updateRequestSubject.OnNext(Unit.Default);
+                }
+                else
+                {
+                    this.LastItem = this.Texts.Add(text);
+                }
             }
         }
 
@@ -538,11 +549,14 @@ namespace WpfTools.Controls
             this.topOffset = 0;
             this.bottomOffset = 0;
             this.Texts.Clear();
-            this.LastItem = this.Texts.Add(this.GenerateFormattedText(""));
+            lock (this.lastItemLock)
+            {
+                this.LastItem = this.Texts.Add(this.GenerateFormattedText(""));
+            }
             this.RefreshTexts(true);
         }
 
-        public void Write(string text, params TextBrush[] brush)
+        public void Write(string text, bool atNewLine, params TextBrush[] brush)
         {
             var lines = text.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
 
@@ -553,57 +567,64 @@ namespace WpfTools.Controls
 
             var brushes = (brush == null) ? new TextBrush[0] : brush;
 
-            for (int i = 0; i < lines.Length; i++)
+            lock (this.lastItemLock)
             {
-                var line = lines[i];
-                if (i == 0 && this.LastItem != null)
+                for (int i = 0; i < lines.Length; i++)
                 {
-                    //if (line.Length == 0)
-                    //{
-                    //    this.LastItem = null;
-                    //}
-                    //else
-                    //{
-                    if (this.LastItem.Value != null)
+                    var line = lines[i];
+                    if (i == 0 && this.LastItem != null
+                        && (!atNewLine || this.Texts.Count <= 0
+                        || (this.Texts.Count == 1 && this.Texts.CurrentBlock.First.Value.Text.Length <= 0)))
                     {
-                        this.LastItem.Value = this.GenerateText(this.LastItem.Value, line, brushes);
-                        updated = true;
+                        //if (line.Length == 0)
+                        //{
+                        //    this.LastItem = null;
+                        //}
+                        //else
+                        //{
+                        if (this.LastItem.Value != null)
+                        {
+                            this.LastItem.Value = this.GenerateText(this.LastItem.Value, line, brushes);
+                            updated = true;
+                        }
+                        else
+                        {
+                            this.LastItem.Value = this.GenerateText(line, brushes);
+                            updated = true;
+                        }
+                        if (lines.Length == 1)
+                        {
+                            refresh = true;
+                            //this.RefreshTexts();
+                        }
+                        //}
                     }
                     else
                     {
-                        this.LastItem.Value = this.GenerateText(line, brushes);
-                        updated = true;
+                        if (items == null)
+                        {
+                            items = new List<FormattedText>();
+                        }
+                        var item = this.GenerateText(line, brushes);
+                        items.Add(item);
+                        //this.LastItem = (line.Length == 0) ? null : this.Texts.Add(item);
                     }
-                    if (lines.Length == 1)
-                    {
-                        refresh = true;
-                        //this.RefreshTexts();
-                    }
-                    //}
+
+                    brushes = brushes
+                        .Select(x => x.CutStart(line.Length + 1))
+                        .Where(x => x.Length >= 0)
+                        .ToArray();
                 }
-                else
+
+                if (items != null && items.Count > 0)
                 {
-                    if (items == null)
-                    {
-                        items = new List<FormattedText>();
-                    }
-                    var item = this.GenerateText(line, brushes);
-                    items.Add(item);
-                    //this.LastItem = (line.Length == 0) ? null : this.Texts.Add(item);
+                    var last = this.Texts.AddRange(items);
+                    this.LastItem = last; //(last.Value.Text.Length == 0) ? null : last;
+                    return;
                 }
-
-                brushes = brushes
-                    .Select(x => x.CutStart(line.Length + 1))
-                    .Where(x => x.Length >= 0)
-                    .ToArray();
             }
 
-            if (items != null && items.Count > 0)
-            {
-                var last = this.Texts.AddRange(items);
-                this.LastItem = last; //(last.Value.Text.Length == 0) ? null : last;
-            }
-            else if (refresh)
+            if (refresh)
             {
                 this.updateRequestSubject.OnNext(Unit.Default);
                 //this.RefreshTexts();
@@ -1063,6 +1084,33 @@ namespace WpfTools.Controls
             this.RefreshTexts(true);
         }
 
+        /// <summary>
+        /// 全選択
+        /// </summary>
+        private void SelectAll()
+        {
+
+            this.selectedItems.Clear();
+
+            var nextItem = this.Texts.CurrentBlock.Last;
+
+            while (true)
+            {
+                nextItem.IsSelected = true;
+                this.selectedItems.Add(nextItem);
+
+                //^
+                nextItem = nextItem.PrevItem;
+
+                if (nextItem == null)
+                {
+                    break;
+                }
+            }
+
+            this.RefreshTexts(true);
+        }
+
         private BlockItem<FormattedText> GetItemFromPosition(double y)
         {
             var item = this.TopItem;
@@ -1205,10 +1253,10 @@ namespace WpfTools.Controls
             {
                 this.ScrollToBottom();
             }
-            else if (e.Key == Key.NumPad5)
-            {
-                this.Test();
-            }
+            //else if (e.Key == Key.NumPad5)
+            //{
+            //    this.Test();
+            //}
             //else if (e.Key == Key.Up)
             //{
             //    this.MoveUp();
@@ -1220,6 +1268,10 @@ namespace WpfTools.Controls
             else if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control)
             {
                 this.CopySelectedTexts();
+            }
+            else if (e.Key == Key.A && Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                this.SelectAll();
             }
         }
 

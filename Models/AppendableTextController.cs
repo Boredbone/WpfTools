@@ -47,7 +47,17 @@ namespace WpfTools.Models
             {
                 return;
             }
-            this.View.Write(text, brush);
+            this.View.Write(text,false, brush);
+        }
+
+
+        public void WriteAtNewLine(string text)
+        {
+            if (this.View == null)
+            {
+                return;
+            }
+            this.View.Write(text, true);
         }
 
         public void AppendLine(FormattedText text)
