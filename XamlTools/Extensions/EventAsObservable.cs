@@ -41,13 +41,13 @@ namespace Boredbone.XamlTools.Extensions
                 h => (s, e) => h(e),
                 h => target.PreviewMouseLeftButtonDown += h,
                 h => target.PreviewMouseLeftButtonDown -= h)
-                .Select(x => new PointerTapEventArgs(x))
+                .Select(x => new PointerTapEventArgs(x));/*
                 .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
                 h => (s, e) => h(e),
                 h => target.PreviewTouchDown += h,
                 h => target.PreviewTouchDown -= h)
                 .Where(_ => target.IsManipulationEnabled)
-                .Select(x => new PointerTapEventArgs(x)));
+                .Select(x => new PointerTapEventArgs(x)));*/
         }
 
 
@@ -58,13 +58,13 @@ namespace Boredbone.XamlTools.Extensions
                 h => (s, e) => h(e),
                 h => target.MouseMove += h,
                 h => target.MouseMove -= h)
-                .Select(x => new PointerTapEventArgs(x))
+                .Select(x => new PointerTapEventArgs(x));/*
                 .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
                 h => (s, e) => h(e),
                 h => target.TouchMove += h,
                 h => target.TouchMove -= h)
                 .Where(_ => target.IsManipulationEnabled)
-                .Select(x => new PointerTapEventArgs(x)));
+                .Select(x => new PointerTapEventArgs(x)));*/
 
         }
         public static IObservable<PointerTapEventArgs> PreviewPointerUpAsObservable
@@ -74,13 +74,13 @@ namespace Boredbone.XamlTools.Extensions
                 h => (s, e) => h(e),
                 h => target.PreviewMouseLeftButtonUp += h,
                 h => target.PreviewMouseLeftButtonUp -= h)
-                .Select(x => new PointerTapEventArgs(x))
+                .Select(x => new PointerTapEventArgs(x));/*
                 .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
                 h => (s, e) => h(e),
                 h => target.PreviewTouchUp += h,
                 h => target.PreviewTouchUp -= h)
                 .Where(_ => target.IsManipulationEnabled)
-                .Select(x => new PointerTapEventArgs(x)));
+                .Select(x => new PointerTapEventArgs(x)));*/
         }
 
 
