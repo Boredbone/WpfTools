@@ -236,6 +236,8 @@ namespace WpfTools.Controls
             var oldPaneWidth = this.pane.ActualWidth;
             var newPaneWidth = oldPaneWidth;
 
+            var isFirstShow = double.IsNaN(this.pane.Width) || double.IsInfinity(this.pane.Width);
+
             if (this.IsPaneOpen)
             {
 
@@ -273,8 +275,7 @@ namespace WpfTools.Controls
                 }
             }
 
-            if (oldPaneWidth != newPaneWidth
-                && !double.IsNaN(this.pane.Width) && !double.IsInfinity(this.pane.Width))
+            if (oldPaneWidth != newPaneWidth && !isFirstShow)
             {
                 var storyboard = new Storyboard();
 
@@ -292,7 +293,7 @@ namespace WpfTools.Controls
                 };
 
                 storyboard.Children.Add(a);
-                
+
                 storyboard.Begin();
             }
             else
