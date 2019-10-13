@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CsCommon.Utility.Tools;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,7 +37,7 @@ namespace WpfTools.Behaviors
             {
                 element.RequestNavigate += (_, __) =>
                 {
-                    System.Diagnostics.Process.Start(element.NavigateUri.ToString());
+                    ProcessHelper.OpenBrowserWin(element.NavigateUri.ToString());
                 };
             }
         }
