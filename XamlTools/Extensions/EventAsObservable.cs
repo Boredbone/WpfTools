@@ -44,8 +44,8 @@ namespace Boredbone.XamlTools.Extensions
                 .Select(x => new PointerTapEventArgs(x))
                 .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
                 h => (s, e) => h(e),
-                h => target.PreviewTouchDown += h,
-                h => target.PreviewTouchDown -= h)
+                h => target.TouchDown += h,
+                h => target.TouchDown -= h)
                 .Where(_ => target.IsManipulationEnabled)
                 .Select(x => new PointerTapEventArgs(x)));
         }
@@ -77,10 +77,31 @@ namespace Boredbone.XamlTools.Extensions
                 .Select(x => new PointerTapEventArgs(x))
                 .Merge(Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
                 h => (s, e) => h(e),
-                h => target.PreviewTouchUp += h,
-                h => target.PreviewTouchUp -= h)
+                h => target.TouchUp += h,
+                h => target.TouchUp -= h)
                 .Where(_ => target.IsManipulationEnabled)
                 .Select(x => new PointerTapEventArgs(x)));
+        }
+
+        public static IObservable<PointerTapEventArgs> TouchDownAsObservable
+            (this UIElement target)
+        {
+            return Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.TouchDown += h,
+                h => target.TouchDown -= h)
+                .Where(_ => target.IsManipulationEnabled)
+                .Select(x => new PointerTapEventArgs(x));
+        }
+        public static IObservable<PointerTapEventArgs> TouchUpAsObservable
+            (this UIElement target)
+        {
+            return Observable.FromEvent<EventHandler<TouchEventArgs>, TouchEventArgs>(
+                h => (s, e) => h(e),
+                h => target.TouchUp += h,
+                h => target.TouchUp -= h)
+                .Where(_ => target.IsManipulationEnabled)
+                .Select(x => new PointerTapEventArgs(x));
         }
 
 
