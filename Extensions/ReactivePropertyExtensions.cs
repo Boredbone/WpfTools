@@ -13,6 +13,7 @@ namespace WpfTools.Extensions
 {
     public static class ReactivePropertyExtensions
     {
+        /*
         public static ReactivePropertySlim<TProperty> ToReactivePropertySlimAsSynchronized<TSubject, TProperty>(
             this TSubject subject, Expression<Func<TSubject, TProperty>> propertySelector, CompositeDisposable disposables,
             ReactivePropertyMode mode = ReactivePropertyMode.DistinctUntilChanged | ReactivePropertyMode.RaiseLatestValueOnSubscribe)
@@ -53,6 +54,6 @@ namespace WpfTools.Extensions
             convertBack(rp).Subscribe(x => setter(subject, x));
             return rp;
         }
-
+        */
     }
 }
