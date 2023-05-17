@@ -121,22 +121,22 @@ namespace WpfTools.Controls
     class ColorSelectorViewModel : IDisposable, INotifyPropertyChanged
     {
         [Range(0, 255)]
-        public ReactiveProperty<byte> A { get; }
+        public ReactivePropertySlim<byte> A { get; }
         [Range(0, 255)]
-        public ReactiveProperty<byte> R { get; }
+        public ReactivePropertySlim<byte> R { get; }
         [Range(0, 255)]
-        public ReactiveProperty<byte> G { get; }
+        public ReactivePropertySlim<byte> G { get; }
         [Range(0, 255)]
-        public ReactiveProperty<byte> B { get; }
+        public ReactivePropertySlim<byte> B { get; }
 
-        public ReadOnlyReactiveProperty<Color> SelectedColor { get; }
-        public ReactiveCommand PresetCommand { get; }
+        public ReadOnlyReactivePropertySlim<Color> SelectedColor { get; }
+        public ReactiveCommandSlim PresetCommand { get; }
 
         public ObservableCollection<Color> Presets { get; }
 
         private readonly CompositeDisposable disposables;
 
-        private ReactiveProperty<bool> Updating { get; }
+        private ReactivePropertySlim<bool> Updating { get; }
 
         public bool Alpha
         {
@@ -157,19 +157,19 @@ namespace WpfTools.Controls
         {
             this.disposables = new CompositeDisposable();
 
-            this.A = new ReactiveProperty<byte>((byte)0xFF).AddTo(this.disposables);
-            this.R = new ReactiveProperty<byte>((byte)0xFF).AddTo(this.disposables);
-            this.G = new ReactiveProperty<byte>((byte)0xFF).AddTo(this.disposables);
-            this.B = new ReactiveProperty<byte>((byte)0xFF).AddTo(this.disposables);
+            this.A = new ReactivePropertySlim<byte>((byte)0xFF).AddTo(this.disposables);
+            this.R = new ReactivePropertySlim<byte>((byte)0xFF).AddTo(this.disposables);
+            this.G = new ReactivePropertySlim<byte>((byte)0xFF).AddTo(this.disposables);
+            this.B = new ReactivePropertySlim<byte>((byte)0xFF).AddTo(this.disposables);
 
-            this.Updating = new ReactiveProperty<bool>(false).AddTo(this.disposables);
+            this.Updating = new ReactivePropertySlim<bool>(false).AddTo(this.disposables);
 
             this.SelectedColor = Observable
                 .CombineLatest(this.A, this.R, this.G, this.B)
                 .CombineLatest(this.Updating, (x, _) => x)
                 .Where(_ => !this.Updating.Value)
                 .Select(x => Color.FromArgb(this.Alpha ? x[0] : (byte)0xFF, x[1], x[2], x[3]))
-                .ToReadOnlyReactiveProperty()
+                .ToReadOnlyReactivePropertySlim()
                 .AddTo(this.disposables);
             
 
@@ -188,7 +188,7 @@ namespace WpfTools.Controls
                 Colors.Black,
             });
 
-            this.PresetCommand = new ReactiveCommand().AddTo(this.disposables);
+            this.PresetCommand = new ReactiveCommandSlim().AddTo(this.disposables);
             this.PresetCommand.Subscribe(x =>
             {
                 var color = x as Color?;
