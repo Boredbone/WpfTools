@@ -218,6 +218,14 @@ namespace WpfTools.Controls
             var rating = this.Value;
             this.RatingCollection
                 .ForEach((x, c) => x.IsSelected = (c < rating));
+            if (this.Slider != null)
+            {
+                var sliderVal = (int)Math.Round(this.Slider.Value);
+                if (sliderVal != rating)
+                {
+                    this.Slider.Value = rating;
+                }
+            }
         }
     }
 
